@@ -10,7 +10,14 @@ const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'tu_clave_secreta_aqui';
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: [
+        'https://whimsical-phoenix-1e9b16.netlify.app', // Tu Netlify
+        'https://dental-clinic-app-production.up.railway.app', // Tu Railway
+        'http://localhost:3000'
+    ],
+    credentials: true
+}));
 app.use(express.json());
 
 // Conexión a MongoDB Atlas
