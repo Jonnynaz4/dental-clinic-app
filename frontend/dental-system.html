@@ -1,0 +1,2776 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DentalClinic">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" type="image/png" href="assets/images/favicon.ico">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>DentalClinic</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* Root Variables */
+        :root {
+            --sidebar-bg: #1a1d29;
+            --sidebar-bg-hover: #252a3a;
+            --sidebar-active: #2d7af9;
+            --sidebar-text: #a0a6c1;
+            --sidebar-text-active: #ffffff;
+            --sidebar-width: 280px;
+            --sidebar-collapsed-width: 70px;
+            --sidebar-shadow: 0 0 35px 0 rgba(49, 57, 89, 0.1);
+            --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --border-radius: 12px;
+            --brand-primary: #20a8d8;
+            --brand-success: #20c997;
+            --brand-danger: #f86c6b;
+            --brand-warning: #ffc107;
+            --content-bg: #f5f7fb;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--content-bg);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            color: #2d3748;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--sidebar-bg);
+            transition: var(--transition-base);
+            z-index: 100;
+            box-shadow: var(--sidebar-shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed-width);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem 1.25rem;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition-base);
+        }
+
+        .sidebar-header .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .sidebar-header .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--sidebar-active), #5a9cff);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 10px rgba(45, 122, 249, 0.3);
+        }
+
+        .sidebar-header .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            transition: var(--transition-base);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .logo-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            padding: 1rem 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        .menu {
+            list-style: none;
+            padding: 0 0.75rem;
+        }
+
+        .menu-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: rgba(160, 166, 193, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0 1rem;
+            margin-bottom: 0.75rem;
+            transition: var(--transition-base);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .menu-section-title {
+            opacity: 0;
+            height: 0;
+            margin-bottom: 0;
+            padding: 0;
+        }
+
+        .menu-item {
+            margin-bottom: 0.25rem;
+            position: relative;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--sidebar-text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-base);
+            border-radius: var(--border-radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--sidebar-active);
+            transform: scaleY(0);
+            transition: var(--transition-base);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .menu-item a:hover {
+            background: var(--sidebar-bg-hover);
+            color: var(--sidebar-text-active);
+            transform: translateX(4px);
+        }
+
+        .menu-item.active > a {
+            background: rgba(45, 122, 249, 0.1);
+            color: var(--sidebar-text-active);
+        }
+
+        .menu-item.active > a::before {
+            transform: scaleY(1);
+        }
+
+        .menu-item a .menu-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            transition: var(--transition-base);
+            font-size: 1.1rem;
+        }
+
+        .menu-item a .menu-title {
+            flex-grow: 1;
+            transition: var(--transition-base);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .menu-item a .menu-title {
+            opacity: 0;
+            width: 0;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            background-color: var(--content-bg);
+            transition: var(--transition-base);
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .sidebar.collapsed ~ .main-content {
+            margin-left: var(--sidebar-collapsed-width);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2 {
+            color: #4a5568;
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h3 {
+            color: #4a5568;
+            font-size: 1.1rem;
+            margin: 1.25rem 0 0.75rem 0;
+        }
+
+        /* Form Styles */
+        form {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: grid;
+            gap: 1.25rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        form label {
+            font-size: 0.9rem;
+            color: #4a5568;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        form input,
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            background: #f7fafc;
+            transition: var(--transition-base);
+        }
+
+        form input:focus,
+        form select:focus,
+        form textarea:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(32, 168, 216, 0.1);
+        }
+
+        /* Button Styles */
+        button {
+            background: linear-gradient(135deg, var(--brand-primary), #1a8bb1);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: var(--transition-base);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+
+        button.success {
+            background: linear-gradient(135deg, var(--brand-success), #1a9c7a);
+        }
+
+        button.warning {
+            background: linear-gradient(135deg, var(--brand-warning), #e0a800);
+        }
+
+        button.danger {
+            background: linear-gradient(135deg, var(--brand-danger), #e74c3c);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f7fafc;
+        }
+
+        tr:hover {
+            background: #edf2f7;
+            transition: var(--transition-base);
+        }
+
+        /* Messages */
+        .message {
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            color: var(--brand-danger);
+            border: 1px solid var(--brand-danger);
+        }
+
+        .message.success {
+            background: #f0fff4;
+            color: var(--brand-success);
+            border: 1px solid var(--brand-success);
+        }
+
+        .message.warning {
+            background: #fffbf0;
+            color: var(--brand-warning);
+            border: 1px solid var(--brand-warning);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--brand-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--brand-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                left: calc(-1 * var(--sidebar-width));
+            }
+            .sidebar.toggled {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .connection-status.connected {
+            background: #d5f4e6;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+
+        .connection-status.disconnected {
+            background: #fadbd8;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        /* Nuevos estilos para la sección de ventas mejorada */
+        .cita-seleccionada {
+            background: #e8f5e8;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .cita-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .seccion-venta {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .agregar-items {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            align-items: end;
+        }
+
+        .iva-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .iva-toggle label {
+            margin: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .iva-toggle input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .cobro-section {
+            background: #e8f4f8;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-success {
+            background: #d5f4e6;
+            color: #27ae60;
+        }
+
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-error {
+            background: #fadbd8;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- Connection Status Indicator -->
+    <div id="connection-status" class="connection-status disconnected">
+        <i class="ri-wifi-off-line"></i>
+        <span>Desconectado</span>
+    </div>
+
+    <!-- Modern Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="ri-tooth-fill"></i>
+                </div>
+                <div class="logo-text">DentalClinic</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-content">
+            <ul class="menu">
+                <div class="menu-section">
+                    <div class="menu-section-title">GESTIÓN PRINCIPAL</div>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('nueva-cita')">
+                            <div class="menu-icon"><i class="ri-calendar-2-fill"></i></div>
+                            <div class="menu-title">Nueva Cita</div>
+                        </a>
+                    </li>
+                    <li class="menu-item active">
+                        <a href="#" onclick="showView('ver-citas')">
+                            <div class="menu-icon"><i class="ri-time-fill"></i></div>
+                            <div class="menu-title">Ver Citas</div>
+                        </a>
+                    </li>
+                </div>
+                
+                <div class="menu-section">
+                    <div class="menu-section-title">PACIENTES Y PERSONAL</div>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('pacientes')">
+                            <div class="menu-icon"><i class="ri-user-fill"></i></div>
+                            <div class="menu-title">Pacientes</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('dentistas')">
+                            <div class="menu-icon"><i class="ri-user-star-fill"></i></div>
+                            <div class="menu-title">Dentistas</div>
+                        </a>
+                    </li>
+                </div>
+                
+                <div class="menu-section">
+                    <div class="menu-section-title">SERVICIOS Y PRODUCTOS</div>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('servicios')">
+                            <div class="menu-icon"><i class="ri-service-fill"></i></div>
+                            <div class="menu-title">Servicios</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('productos')">
+                            <div class="menu-icon"><i class="ri-store-2-fill"></i></div>
+                            <div class="menu-title">Productos</div>
+                        </a>
+                    </li>
+                </div>
+
+                <div class="menu-section">
+                    <div class="menu-section-title">VENTAS Y FINANZAS</div>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('nueva-venta')">
+                            <div class="menu-icon"><i class="ri-shopping-cart-fill"></i></div>
+                            <div class="menu-title">Nueva Venta</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('ventas')">
+                            <div class="menu-icon"><i class="ri-money-dollar-circle-fill"></i></div>
+                            <div class="menu-title">Historial Ventas</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('corte-caja')">
+                            <div class="menu-icon"><i class="ri-bar-chart-fill"></i></div>
+                            <div class="menu-title">Corte de Caja</div>
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="#" onclick="showView('nomina')">
+                            <div class="menu-icon"><i class="ri-bank-card-fill"></i></div>
+                            <div class="menu-title">Nómina</div>
+                        </a>
+                    </li>
+                </div>
+            </ul>
+        </div>
+        <div class="menu-section">
+    <div class="menu-section-title">USUARIO</div>
+    <li class="menu-item">
+        <a href="#" onclick="logout()">
+            <div class="menu-icon"><i class="ri-logout-box-fill"></i></div>
+            <div class="menu-title">Cerrar Sesión</div>
+        </a>
+    </li>
+</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Nueva Cita -->
+            <div id="nueva-cita" class="view">
+                <h1><i class="ri-calendar-2-fill"></i> Crear Nueva Cita</h1>
+                <form id="form-nueva-cita">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Paciente:</label>
+                            <select id="paciente-id" name="paciente_id" required>
+                                <option value="">Cargando pacientes...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Dentista:</label>
+                            <select id="dentista-id" name="dentista_id" required>
+                                <option value="">Cargando dentistas...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea name="descripcion" rows="3" required></textarea>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Fecha y Hora:</label>
+                            <input type="datetime-local" name="fecha_hora" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Duración (minutos):</label>
+                            <input type="number" name="duracion" value="60" min="30" step="30" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Servicio:</label>
+                        <select id="servicio-id" name="servicio_id" required>
+                            <option value="">Cargando servicios...</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="btn-guardar-cita">
+                        <i class="ri-save-fill"></i> Guardar Cita
+                    </button>
+                </form>
+                <div id="mensaje-cita"></div>
+            </div>
+
+            <!-- Ver Citas -->
+            <div id="ver-citas" class="view active">
+                <h1><i class="ri-time-fill"></i> Citas Próximas</h1>
+                <button onclick="cargarCitas()" id="btn-cargar-citas">
+                    <i class="ri-refresh-line"></i> Refrescar
+                </button>
+                <div id="loading-citas" style="display: none;">
+                    <div class="loading"></div> Cargando citas...
+                </div>
+                <table id="tabla-citas">
+                    <thead>
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Descripción</th>
+                            <th>Fecha y Hora</th>
+                            <th>Duración</th>
+                            <th>Dentista</th>
+                            <th>Estatus</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="citas-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center;">Cargando citas...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Gestionar Pacientes -->
+            <div id="pacientes" class="view">
+                <h1><i class="ri-user-fill"></i> Gestión de Pacientes</h1>
+                <button onclick="cargarPacientes()" id="btn-cargar-pacientes">
+                    <i class="ri-refresh-line"></i> Cargar Pacientes
+                </button>
+                <div id="loading-pacientes" style="display: none;">
+                    <div class="loading"></div> Cargando pacientes...
+                </div>
+                <table id="tabla-pacientes">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Estatus</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pacientes-body">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Cargando pacientes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2>Agregar Paciente</h2>
+                <form id="form-paciente">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Teléfono:</label>
+                            <input type="text" name="telefono">
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <input type="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <label>Estatus:</label>
+                            <select name="estatus" required>
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-guardar-paciente">
+                        <i class="ri-save-fill"></i> Guardar Paciente
+                    </button>
+                </form>
+                <div id="mensaje-paciente"></div>
+            </div>
+
+            <!-- Gestionar Dentistas -->
+            <div id="dentistas" class="view">
+                <h1><i class="ri-user-star-fill"></i> Gestión de Dentistas</h1>
+                <button onclick="cargarDentistas()" id="btn-cargar-dentistas">
+                    <i class="ri-refresh-line"></i> Cargar Dentistas
+                </button>
+                <div id="loading-dentistas" style="display: none;">
+                    <div class="loading"></div> Cargando dentistas...
+                </div>
+                <table id="tabla-dentistas">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Comisión (%)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dentistas-body">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Cargando dentistas...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2>Agregar Dentista</h2>
+                <form id="form-dentista">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado:</label>
+                            <select name="estado" required>
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Comisión (%):</label>
+                            <input type="number" name="comision" step="0.1" min="0" max="100" value="50" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-guardar-dentista">
+                        <i class="ri-save-fill"></i> Guardar Dentista
+                    </button>
+                </form>
+                <div id="mensaje-dentista"></div>
+            </div>
+
+            <!-- Gestionar Servicios -->
+            <div id="servicios" class="view">
+                <h1><i class="ri-service-fill"></i> Gestión de Servicios</h1>
+                <button onclick="cargarServicios()" id="btn-cargar-servicios">
+                    <i class="ri-refresh-line"></i> Cargar Servicios
+                </button>
+                <div id="loading-servicios" style="display: none;">
+                    <div class="loading"></div> Cargando servicios...
+                </div>
+                <table id="tabla-servicios">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                            <th>Estatus</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicios-body">
+                        <tr>
+                            <td colspan="5" style="text-align: center;">Cargando servicios...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2>Agregar Servicio</h2>
+                <form id="form-servicio">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio:</label>
+                            <input type="number" name="precio" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea name="descripcion" rows="3"></textarea>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Estatus:</label>
+                            <select name="estatus" required>
+                                <option value="Activo">Activo</option>
+                                <option value="Inactivo">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-guardar-servicio">
+                        <i class="ri-save-fill"></i> Guardar Servicio
+                    </button>
+                </form>
+                <div id="mensaje-servicio"></div>
+            </div>
+
+            <!-- Gestionar Productos -->
+            <div id="productos" class="view">
+                <h1><i class="ri-store-2-fill"></i> Gestión de Productos</h1>
+                <button onclick="cargarProductos()" id="btn-cargar-productos">
+                    <i class="ri-refresh-line"></i> Cargar Productos
+                </button>
+                <div id="loading-productos" style="display: none;">
+                    <div class="loading"></div> Cargando productos...
+                </div>
+                <table id="tabla-productos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Marca</th>
+                            <th>Cantidad</th>
+                            <th>Precio Compra</th>
+                            <th>Precio Venta</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productos-body">
+                        <tr>
+                            <td colspan="7" style="text-align: center;">Cargando productos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h2>Agregar Producto</h2>
+                <form id="form-producto">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            <input type="text" name="nombre" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Marca:</label>
+                            <input type="text" name="marca">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descripción:</label>
+                        <textarea name="descripcion" rows="2"></textarea>
+                    </div>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Cantidad:</label>
+                            <input type="number" name="cantidad" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Compra:</label>
+                            <input type="number" name="precio_compra" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Precio Venta:</label>
+                            <input type="number" name="precio_venta" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-guardar-producto">
+                        <i class="ri-save-fill"></i> Guardar Producto
+                    </button>
+                </form>
+                <div id="mensaje-producto"></div>
+            </div>
+
+            <!-- Nueva Venta - VERSIÓN MEJORADA -->
+            <div id="nueva-venta" class="view">
+                <h1><i class="ri-shopping-cart-fill"></i> Nueva Venta</h1>
+                
+                <!-- Selección de Cita Pendiente -->
+                <div class="seccion-venta">
+                    <h3><i class="ri-calendar-check-fill"></i> Seleccionar Cita Pendiente</h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Buscar Cita Pendiente:</label>
+                            <select id="select-cita-pendiente" onchange="cargarDatosCita()">
+                                <option value="">Seleccionar cita pendiente...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="button" onclick="cargarCitasPendientes()" class="secondary">
+                                <i class="ri-refresh-line"></i> Actualizar Citas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de la Cita Seleccionada -->
+                <div id="info-cita-seleccionada" class="cita-seleccionada" style="display: none;">
+                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="margin: 0; color: #2d7af9;">
+                            <i class="ri-information-fill"></i> Cita Seleccionada
+                        </h4>
+                        <button type="button" onclick="limpiarSeleccionCita()" class="danger" style="padding: 5px 10px;">
+                            <i class="ri-close-line"></i> Cambiar Cita
+                        </button>
+                    </div>
+                    <div class="cita-info">
+                        <div class="info-item">
+                            <span class="info-label">Paciente:</span>
+                            <span class="info-value" id="cita-paciente">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dentista:</span>
+                            <span class="info-value" id="cita-dentista">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Servicio Principal:</span>
+                            <span class="info-value" id="cita-servicio">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Fecha y Hora:</span>
+                            <span class="info-value" id="cita-fecha">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Descripción:</span>
+                            <span class="info-value" id="cita-descripcion">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form id="form-nueva-venta">
+                    <!-- Información de la Venta -->
+                    <div class="seccion-venta">
+                        <h3><i class="ri-file-info-fill"></i> Información de la Venta</h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Paciente:</label>
+                                <select id="venta-paciente-id" name="paciente_id" required>
+                                    <option value="">Seleccionar paciente...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Método de Pago:</label>
+                                <select id="venta-metodo-pago" name="metodo_pago" required>
+                                    <option value="">Seleccionar método...</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="tarjeta">Tarjeta</option>
+                                    <option value="transferencia">Transferencia</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Servicios Adicionales -->
+                    <div class="seccion-venta">
+                        <h3><i class="ri-service-fill"></i> Agregar Servicios Adicionales</h3>
+                        <div class="agregar-items">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Servicio:</label>
+                                    <select id="venta-servicio-adicional">
+                                        <option value="">Seleccionar servicio adicional...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Dentista:</label>
+                                    <select id="venta-dentista-adicional">
+                                        <option value="">Seleccionar dentista...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="button" onclick="agregarServicioAdicional()" class="success">
+                                <i class="ri-add-fill"></i> Agregar Servicio
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Productos -->
+                    <div class="seccion-venta">
+                        <h3><i class="ri-store-2-fill"></i> Agregar Productos</h3>
+                        <div class="agregar-items">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label>Producto:</label>
+                                    <select id="venta-producto-id">
+                                        <option value="">Seleccionar producto...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Cantidad:</label>
+                                    <input type="number" id="venta-cantidad" value="1" min="1">
+                                </div>
+                            </div>
+                            <button type="button" onclick="agregarProductoVenta()" class="success">
+                                <i class="ri-add-fill"></i> Agregar Producto
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Resumen de la Venta -->
+                    <div class="seccion-venta">
+                        <h3><i class="ri-file-list-3-fill"></i> Resumen de la Venta</h3>
+                        
+                        <!-- Items de la venta -->
+                        <table id="tabla-items-venta">
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="items-venta-body">
+                                <tr>
+                                    <td colspan="6" style="text-align: center;">No hay items agregados</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Configuración de IVA -->
+                        <div class="iva-toggle">
+                            <input type="checkbox" id="iva-toggle" checked>
+                            <label for="iva-toggle" id="iva-label">
+                                <i class="ri-checkbox-fill"></i> IVA Incluido (16%)
+                            </label>
+                        </div>
+
+                        <!-- Totales -->
+                        <div class="grid-3" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <label>Subtotal:</label>
+                                <input type="text" id="venta-subtotal" value="$0.00" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>IVA (16%):</label>
+                                <input type="text" id="venta-iva" value="$0.00" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Total:</label>
+                                <input type="text" id="venta-total" value="$0.00" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Cobro (AHORA DEBAJO DE LOS ARTÍCULOS) -->
+                    <div class="cobro-section">
+                        <h3><i class="ri-money-dollar-circle-fill"></i> Información de Cobro</h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label>Monto Pagado:</label>
+                                <input type="number" id="venta-monto-pagado" name="monto_pagado" step="0.01" min="0" value="0">
+                                <small style="color: #666;">Dejar en 0 para venta pendiente</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Cambio:</label>
+                                <input type="text" id="venta-cambio" value="$0.00" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div style="display: flex; gap: 15px; margin-top: 20px;">
+                        <button type="submit" id="btn-guardar-venta" class="success">
+                            <i class="ri-money-dollar-circle-fill"></i> Procesar Venta
+                        </button>
+                        <button type="button" onclick="limpiarFormularioVenta()" class="secondary">
+                            <i class="ri-eraser-fill"></i> Limpiar Todo
+                        </button>
+                    </div>
+                </form>
+                <div id="mensaje-venta"></div>
+            </div>
+
+            <!-- Historial de Ventas -->
+            <div id="ventas" class="view">
+                <h1><i class="ri-money-dollar-circle-fill"></i> Historial de Ventas</h1>
+                <div class="grid-3">
+                    <div class="card stat-card">
+                        <div class="stat-number" id="total-ventas">$0.00</div>
+                        <div class="stat-label">Total Ventas</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-number" id="total-efectivo">$0.00</div>
+                        <div class="stat-label">Ventas en Efectivo</div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-number" id="total-tarjeta">$0.00</div>
+                        <div class="stat-label">Ventas con Tarjeta</div>
+                    </div>
+                </div>
+                <button onclick="cargarVentas()" id="btn-cargar-ventas">
+                    <i class="ri-refresh-line"></i> Cargar Ventas
+                </button>
+                <div id="loading-ventas" style="display: none;">
+                    <div class="loading"></div> Cargando ventas...
+                </div>
+                <table id="tabla-ventas">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Paciente</th>
+                            <th>Items</th>
+                            <th>Método Pago</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ventas-body">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Cargando ventas...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Corte de Caja -->
+            <div id="corte-caja" class="view">
+                <h1><i class="ri-bar-chart-fill"></i> Corte de Caja</h1>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Fecha de Corte:</label>
+                        <input type="date" id="fecha-corte" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button onclick="generarCorteCaja()" id="btn-generar-corte">
+                            <i class="ri-calculator-fill"></i> Generar Corte
+                        </button>
+                    </div>
+                </div>
+                <div id="loading-corte" style="display: none;">
+                    <div class="loading"></div> Generando corte de caja...
+                </div>
+                <div id="resultado-corte" style="display: none;">
+                    <div class="grid-3">
+                        <div class="card stat-card">
+                            <div class="stat-number" id="corte-efectivo">$0.00</div>
+                            <div class="stat-label">Efectivo</div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-number" id="corte-tarjeta">$0.00</div>
+                            <div class="stat-label">Tarjeta</div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-number" id="corte-total">$0.00</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                    </div>
+                    <div id="detalle-corte"></div>
+                </div>
+            </div>
+
+            <!-- Nómina -->
+            <div id="nomina" class="view">
+                <h1><i class="ri-bank-card-fill"></i> Gestión de Nómina</h1>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Fecha Inicio:</label>
+                        <input type="date" id="fecha-inicio-nomina">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha Fin:</label>
+                        <input type="date" id="fecha-fin-nomina">
+                    </div>
+                </div>
+                <button onclick="calcularNomina()" id="btn-calcular-nomina">
+                    <i class="ri-calculator-fill"></i> Calcular Nómina
+                </button>
+                <div id="loading-nomina" style="display: none;">
+                    <div class="loading"></div> Calculando nómina...
+                </div>
+                <div id="resultado-nomina" style="display: none;">
+                    <div class="grid-3">
+                        <div class="card stat-card">
+                            <div class="stat-number" id="total-nomina">$0.00</div>
+                            <div class="stat-label">Total Nómina</div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-number" id="dentistas-activos">0</div>
+                            <div class="stat-label">Dentistas Activos</div>
+                        </div>
+                        <div class="card stat-card">
+                            <div class="stat-number" id="comisiones-pendientes">$0.00</div>
+                            <div class="stat-label">Comisiones Pendientes</div>
+                        </div>
+                    </div>
+                    <table id="tabla-nomina">
+                        <thead>
+                            <tr>
+                                <th>Dentista</th>
+                                <th>Servicios Realizados</th>
+                                <th>Total Ventas</th>
+                                <th>Comisión (%)</th>
+                                <th>Comisión Total</th>
+                                <th>Estatus</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nomina-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para detalles -->
+    <div id="modal-detalles" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Detalles</h2>
+                <button class="modal-close" onclick="cerrarModal()">&times;</button>
+            </div>
+            <div id="modal-body">
+                <!-- Contenido dinámico del modal -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Configuración de la API
+    const API_BASE_URL = 'https://tu-backend.railway.app/api';
+
+    // Verificar autenticación al cargar
+    function checkAuth() {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        
+        if (!token || !user) {
+            window.location.href = 'login.html';
+            return false;
+        }
+        
+        try {
+            const userData = JSON.parse(user);
+            const userInfoElement = document.getElementById('userInfo');
+            if (userInfoElement) {
+                userInfoElement.innerHTML = `
+                    <div class="menu-icon"><i class="ri-user-fill"></i></div>
+                    <div class="menu-title">${userData.nombre} (${userData.rol})</div>
+                `;
+            }
+            return true;
+        } catch (error) {
+            console.error('Error parsing user data:', error);
+            window.location.href = 'login.html';
+            return false;
+        }
+    }
+
+    // Función de logout
+    function logout() {
+        if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    }
+
+    // Función para hacer requests autenticados
+    async function apiCall(endpoint, options = {}) {
+        // Verificar autenticación primero
+        if (!checkAuth()) {
+            throw new Error('No autenticado');
+        }
+
+        const token = localStorage.getItem('token');
+        
+        try {
+            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    ...options.headers
+                },
+                ...options
+            });
+
+            if (response.status === 401) {
+                // Token expirado o inválido
+                logout();
+                throw new Error('Sesión expirada');
+            }
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            updateConnectionStatus(true);
+            return data;
+        } catch (error) {
+            console.error('Error en API call:', error);
+            updateConnectionStatus(false);
+            throw error;
+        }
+    }
+
+    // Variables globales
+    let itemsVenta = [];
+    let pacientes = [];
+    let dentistas = [];
+    let servicios = [];
+    let productos = [];
+    let citasPendientes = [];
+    let citaSeleccionada = null;
+    let aplicarIVA = true; // Por defecto sí aplica IVA
+
+    // ==================== FUNCIONES DE UTILIDAD ====================
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('es-MX', {
+            style: 'currency',
+            currency: 'MXN'
+        }).format(amount);
+    }
+
+    function showMessage(elementId, message, type) {
+        const element = document.getElementById(elementId);
+        element.innerHTML = `<div class="message ${type}">${message}</div>`;
+        setTimeout(() => element.innerHTML = '', 5000);
+    }
+
+    function showLoading(elementId, show) {
+        const element = document.getElementById(elementId);
+        element.style.display = show ? 'block' : 'none';
+    }
+
+    function setButtonLoading(buttonId, loading) {
+        const button = document.getElementById(buttonId);
+        if (loading) {
+            button.innerHTML = '<div class="loading"></div> Procesando...';
+            button.disabled = true;
+        } else {
+            // Restaurar el texto original según el botón
+            const buttonConfig = {
+                'btn-guardar-cita': '<i class="ri-save-fill"></i> Guardar Cita',
+                'btn-guardar-paciente': '<i class="ri-save-fill"></i> Guardar Paciente',
+                'btn-guardar-dentista': '<i class="ri-save-fill"></i> Guardar Dentista',
+                'btn-guardar-servicio': '<i class="ri-save-fill"></i> Guardar Servicio',
+                'btn-guardar-producto': '<i class="ri-save-fill"></i> Guardar Producto',
+                'btn-cargar-citas': '<i class="ri-refresh-line"></i> Refrescar',
+                'btn-guardar-venta': '<i class="ri-money-dollar-circle-fill"></i> Procesar Venta',
+                'btn-cargar-ventas': '<i class="ri-refresh-line"></i> Cargar Ventas',
+                'btn-generar-corte': '<i class="ri-calculator-fill"></i> Generar Corte',
+                'btn-calcular-nomina': '<i class="ri-calculator-fill"></i> Calcular Nómina'
+            };
+            button.innerHTML = buttonConfig[buttonId] || button.innerHTML;
+            button.disabled = false;
+        }
+    }
+
+    // ==================== MANEJO DE CONEXIÓN ====================
+    function updateConnectionStatus(connected) {
+        const statusElement = document.getElementById('connection-status');
+        if (connected) {
+            statusElement.className = 'connection-status connected';
+            statusElement.innerHTML = '<i class="ri-wifi-line"></i><span>Conectado</span>';
+        } else {
+            statusElement.className = 'connection-status disconnected';
+            statusElement.innerHTML = '<i class="ri-wifi-off-line"></i><span>Desconectado</span>';
+        }
+    }
+
+    // ==================== FUNCIONES DE NAVEGACIÓN ====================
+    function showView(viewId) {
+        // Ocultar todas las vistas
+        const views = document.querySelectorAll('.view');
+        views.forEach(view => view.classList.remove('active'));
+        
+        // Mostrar la vista seleccionada
+        const selectedView = document.getElementById(viewId);
+        if (selectedView) {
+            selectedView.classList.add('active');
+        }
+        
+        // Actualizar el menú activo
+        const menuItems = document.querySelectorAll('.menu-item');
+        menuItems.forEach(item => item.classList.remove('active'));
+        
+        const activeMenuItem = document.querySelector(`.menu-item a[onclick="showView('${viewId}')"]`).parentElement;
+        if (activeMenuItem) {
+            activeMenuItem.classList.add('active');
+        }
+        
+        // Cargar datos específicos según la vista
+        switch(viewId) {
+            case 'ver-citas':
+                cargarCitas();
+                break;
+            case 'pacientes':
+                cargarPacientes();
+                break;
+            case 'dentistas':
+                cargarDentistas();
+                break;
+            case 'servicios':
+                cargarServicios();
+                break;
+            case 'productos':
+                cargarProductos();
+                break;
+            case 'ventas':
+                cargarVentas();
+                break;
+            case 'nomina':
+                // Configurar fechas por defecto para nómina
+                const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+                const lastDay = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
+                document.getElementById('fecha-inicio-nomina').value = firstDay;
+                document.getElementById('fecha-fin-nomina').value = lastDay;
+                break;
+            case 'nueva-cita':
+                cargarSelectoresCita();
+                break;
+            case 'nueva-venta':
+                cargarSelectoresVenta();
+                break;
+            case 'corte-caja':
+                // Configurar fecha por defecto
+                const hoy = new Date().toISOString().split('T')[0];
+                document.getElementById('fecha-corte').value = hoy;
+                break;
+        }
+    }
+
+    // ==================== GESTIÓN DE CITAS ====================
+    async function cargarSelectoresCita() {
+        try {
+            const [pacientesData, dentistasData, serviciosData] = await Promise.all([
+                apiCall('/pacientes'),
+                apiCall('/dentistas'),
+                apiCall('/servicios')
+            ]);
+
+            const selectPaciente = document.getElementById('paciente-id');
+            const selectDentista = document.getElementById('dentista-id');
+            const selectServicio = document.getElementById('servicio-id');
+
+            selectPaciente.innerHTML = '<option value="">Seleccionar paciente</option>' +
+                pacientesData.filter(p => p.estatus === 'Activo')
+                .map(p => `<option value="${p._id}">${p.nombre}</option>`)
+                .join('');
+
+            selectDentista.innerHTML = '<option value="">Seleccionar dentista</option>' +
+                dentistasData.filter(d => d.estado === 'Activo')
+                .map(d => `<option value="${d._id}">${d.nombre}</option>`)
+                .join('');
+
+            selectServicio.innerHTML = '<option value="">Seleccionar servicio</option>' +
+                serviciosData.filter(s => s.estatus === 'Activo')
+                .map(s => `<option value="${s._id}">${s.nombre} - ${formatCurrency(s.precio)}</option>`)
+                .join('');
+
+        } catch (error) {
+            showMessage('mensaje-cita', 'Error al cargar los datos: ' + error.message, 'error');
+        }
+    }
+
+    async function cargarCitas() {
+        showLoading('loading-citas', true);
+        setButtonLoading('btn-cargar-citas', true);
+
+        try {
+            const citas = await apiCall('/citas');
+            const tbody = document.getElementById('citas-body');
+            
+            if (citas.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay citas programadas</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = citas.map(cita => `
+                <tr>
+                    <td>${cita.paciente_id?.nombre || 'N/A'}</td>
+                    <td>${cita.descripcion}</td>
+                    <td>${new Date(cita.fecha_hora).toLocaleString()}</td>
+                    <td>${cita.duracion} min</td>
+                    <td>${cita.dentista_id?.nombre || 'N/A'}</td>
+                    <td>${cita.estatus}</td>
+                    <td>
+                        <button onclick="cancelarCita('${cita._id}')" class="danger">Cancelar</button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (error) {
+            showMessage('mensaje-cita', 'Error al cargar citas: ' + error.message, 'error');
+            document.getElementById('citas-body').innerHTML = 
+                '<tr><td colspan="7" style="text-align: center; color: red;">Error al cargar citas</td></tr>';
+        } finally {
+            showLoading('loading-citas', false);
+            setButtonLoading('btn-cargar-citas', false);
+        }
+    }
+
+    // Form handler para citas
+    document.getElementById('form-nueva-cita').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setButtonLoading('btn-guardar-cita', true);
+
+        try {
+            const formData = new FormData(e.target);
+            const citaData = {
+                paciente_id: formData.get('paciente_id'),
+                descripcion: formData.get('descripcion'),
+                fecha_hora: formData.get('fecha_hora'),
+                duracion: parseInt(formData.get('duracion')),
+                dentista_id: formData.get('dentista_id'),
+                servicio_id: formData.get('servicio_id'),
+                estatus: 'Programada'
+            };
+
+            await apiCall('/citas', {
+                method: 'POST',
+                body: JSON.stringify(citaData)
+            });
+
+            showMessage('mensaje-cita', 'Cita creada exitosamente', 'success');
+            e.target.reset();
+            cargarCitas();
+
+        } catch (error) {
+            showMessage('mensaje-cita', 'Error al crear cita: ' + error.message, 'error');
+        } finally {
+            setButtonLoading('btn-guardar-cita', false);
+        }
+    });
+
+    // ==================== GESTIÓN DE PACIENTES ====================
+    async function cargarPacientes() {
+        showLoading('loading-pacientes', true);
+        setButtonLoading('btn-cargar-pacientes', true);
+
+        try {
+            const pacientesData = await apiCall('/pacientes');
+            const tbody = document.getElementById('pacientes-body');
+            
+            if (pacientesData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay pacientes registrados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = pacientesData.map(paciente => `
+                <tr>
+                    <td>${paciente.nombre}</td>
+                    <td>${paciente.telefono || 'N/A'}</td>
+                    <td>${paciente.email || 'N/A'}</td>
+                    <td>${paciente.estatus}</td>
+                    <td>
+                        <button onclick="editarPaciente('${paciente._id}')" class="secondary">Editar</button>
+                        <button onclick="eliminarPaciente('${paciente._id}')" class="danger">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (error) {
+            showMessage('mensaje-paciente', 'Error al cargar pacientes: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-pacientes', false);
+            setButtonLoading('btn-cargar-pacientes', false);
+        }
+    }
+
+    // Form handler para pacientes
+    document.getElementById('form-paciente').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setButtonLoading('btn-guardar-paciente', true);
+
+        try {
+            const formData = new FormData(e.target);
+            const pacienteData = {
+                nombre: formData.get('nombre'),
+                telefono: formData.get('telefono'),
+                email: formData.get('email'),
+                estatus: formData.get('estatus')
+            };
+
+            await apiCall('/pacientes', {
+                method: 'POST',
+                body: JSON.stringify(pacienteData)
+            });
+
+            showMessage('mensaje-paciente', 'Paciente guardado exitosamente', 'success');
+            e.target.reset();
+            cargarPacientes();
+
+        } catch (error) {
+            showMessage('mensaje-paciente', 'Error al guardar paciente: ' + error.message, 'error');
+        } finally {
+            setButtonLoading('btn-guardar-paciente', false);
+        }
+    });
+
+    // ==================== GESTIÓN DE DENTISTAS ====================
+    async function cargarDentistas() {
+        showLoading('loading-dentistas', true);
+        setButtonLoading('btn-cargar-dentistas', true);
+
+        try {
+            const dentistasData = await apiCall('/dentistas');
+            const tbody = document.getElementById('dentistas-body');
+            
+            if (dentistasData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay dentistas registrados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = dentistasData.map(dentista => `
+                <tr>
+                    <td>${dentista.nombre}</td>
+                    <td>${dentista.estado}</td>
+                    <td>${dentista.comision}%</td>
+                    <td>
+                        <button onclick="editarDentista('${dentista._id}')" class="secondary">Editar</button>
+                        <button onclick="eliminarDentista('${dentista._id}')" class="danger">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (error) {
+            showMessage('mensaje-dentista', 'Error al cargar dentistas: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-dentistas', false);
+            setButtonLoading('btn-cargar-dentistas', false);
+        }
+    }
+
+    // Form handler para dentistas
+    document.getElementById('form-dentista').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setButtonLoading('btn-guardar-dentista', true);
+
+        try {
+            const formData = new FormData(e.target);
+            const dentistaData = {
+                nombre: formData.get('nombre'),
+                estado: formData.get('estado'),
+                comision: parseFloat(formData.get('comision'))
+            };
+
+            await apiCall('/dentistas', {
+                method: 'POST',
+                body: JSON.stringify(dentistaData)
+            });
+
+            showMessage('mensaje-dentista', 'Dentista guardado exitosamente', 'success');
+            e.target.reset();
+            cargarDentistas();
+
+        } catch (error) {
+            showMessage('mensaje-dentista', 'Error al guardar dentista: ' + error.message, 'error');
+        } finally {
+            setButtonLoading('btn-guardar-dentista', false);
+        }
+    });
+
+    // ==================== GESTIÓN DE SERVICIOS ====================
+    async function cargarServicios() {
+        showLoading('loading-servicios', true);
+        setButtonLoading('btn-cargar-servicios', true);
+
+        try {
+            const serviciosData = await apiCall('/servicios');
+            const tbody = document.getElementById('servicios-body');
+            
+            if (serviciosData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay servicios registrados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = serviciosData.map(servicio => `
+                <tr>
+                    <td>${servicio.nombre}</td>
+                    <td>${servicio.descripcion || 'N/A'}</td>
+                    <td>${formatCurrency(servicio.precio)}</td>
+                    <td>${servicio.estatus}</td>
+                    <td>
+                        <button onclick="editarServicio('${servicio._id}')" class="secondary">Editar</button>
+                        <button onclick="eliminarServicio('${servicio._id}')" class="danger">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (error) {
+            showMessage('mensaje-servicio', 'Error al cargar servicios: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-servicios', false);
+            setButtonLoading('btn-cargar-servicios', false);
+        }
+    }
+
+    // Form handler para servicios
+    document.getElementById('form-servicio').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setButtonLoading('btn-guardar-servicio', true);
+
+        try {
+            const formData = new FormData(e.target);
+            const servicioData = {
+                nombre: formData.get('nombre'),
+                descripcion: formData.get('descripcion'),
+                precio: parseFloat(formData.get('precio')),
+                estatus: formData.get('estatus')
+            };
+
+            await apiCall('/servicios', {
+                method: 'POST',
+                body: JSON.stringify(servicioData)
+            });
+
+            showMessage('mensaje-servicio', 'Servicio guardado exitosamente', 'success');
+            e.target.reset();
+            cargarServicios();
+
+        } catch (error) {
+            showMessage('mensaje-servicio', 'Error al guardar servicio: ' + error.message, 'error');
+        } finally {
+            setButtonLoading('btn-guardar-servicio', false);
+        }
+    });
+
+    // ==================== GESTIÓN DE PRODUCTOS ====================
+    async function cargarProductos() {
+        showLoading('loading-productos', true);
+        setButtonLoading('btn-cargar-productos', true);
+
+        try {
+            const productosData = await apiCall('/productos');
+            const tbody = document.getElementById('productos-body');
+            
+            if (productosData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay productos registrados</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = productosData.map(producto => `
+                <tr>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.descripcion || 'N/A'}</td>
+                    <td>${producto.marca || 'N/A'}</td>
+                    <td>${producto.cantidad}</td>
+                    <td>${formatCurrency(producto.precio_compra)}</td>
+                    <td>${formatCurrency(producto.precio_venta)}</td>
+                    <td>
+                        <button onclick="editarProducto('${producto._id}')" class="secondary">Editar</button>
+                        <button onclick="eliminarProducto('${producto._id}')" class="danger">Eliminar</button>
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (error) {
+            showMessage('mensaje-producto', 'Error al cargar productos: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-productos', false);
+            setButtonLoading('btn-cargar-productos', false);
+        }
+    }
+
+    // Form handler para productos
+    document.getElementById('form-producto').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setButtonLoading('btn-guardar-producto', true);
+
+        try {
+            const formData = new FormData(e.target);
+            const productoData = {
+                nombre: formData.get('nombre'),
+                descripcion: formData.get('descripcion'),
+                marca: formData.get('marca'),
+                cantidad: parseInt(formData.get('cantidad')),
+                precio_compra: parseFloat(formData.get('precio_compra')),
+                precio_venta: parseFloat(formData.get('precio_venta'))
+            };
+
+            await apiCall('/productos', {
+                method: 'POST',
+                body: JSON.stringify(productoData)
+            });
+
+            showMessage('mensaje-producto', 'Producto guardado exitosamente', 'success');
+            e.target.reset();
+            cargarProductos();
+
+        } catch (error) {
+            showMessage('mensaje-producto', 'Error al guardar producto: ' + error.message, 'error');
+        } finally {
+            setButtonLoading('btn-guardar-producto', false);
+        }
+    });
+
+    // ==================== GESTIÓN DE VENTAS MEJORADA ====================
+
+    // Cargar citas pendientes para selección
+    async function cargarCitasPendientes() {
+        try {
+            const citas = await apiCall('/citas');
+            const citasFiltradas = citas.filter(cita => 
+                cita.estatus === 'Programada' || cita.estatus === 'En Proceso'
+            );
+            
+            citasPendientes = citasFiltradas;
+            const selectCita = document.getElementById('select-cita-pendiente');
+            
+            selectCita.innerHTML = '<option value="">Seleccionar cita pendiente...</option>' +
+                citasFiltradas.map(cita => `
+                    <option value="${cita._id}">
+                        ${cita.paciente_id?.nombre || 'Paciente'} - ${cita.dentista_id?.nombre || 'Dentista'} - 
+                        ${new Date(cita.fecha_hora).toLocaleDateString()} - ${cita.servicio_id?.nombre || 'Servicio'}
+                    </option>
+                `).join('');
+                
+            showMessage('mensaje-venta', `Se encontraron ${citasFiltradas.length} citas pendientes`, 'success');
+            
+        } catch (error) {
+            showMessage('mensaje-venta', 'Error al cargar citas pendientes: ' + error.message, 'error');
+        }
+    }
+
+    // Cargar datos de la cita seleccionada
+    function cargarDatosCita() {
+        const citaId = document.getElementById('select-cita-pendiente').value;
+        
+        if (!citaId) {
+            limpiarSeleccionCita();
+            return;
+        }
+        
+        citaSeleccionada = citasPendientes.find(cita => cita._id === citaId);
+        
+        if (citaSeleccionada) {
+            // Mostrar información de la cita
+            document.getElementById('cita-paciente').textContent = citaSeleccionada.paciente_id?.nombre || 'N/A';
+            document.getElementById('cita-dentista').textContent = citaSeleccionada.dentista_id?.nombre || 'N/A';
+            document.getElementById('cita-servicio').textContent = citaSeleccionada.servicio_id?.nombre || 'N/A';
+            document.getElementById('cita-fecha').textContent = new Date(citaSeleccionada.fecha_hora).toLocaleString();
+            document.getElementById('cita-descripcion').textContent = citaSeleccionada.descripcion || 'Sin descripción';
+            
+            document.getElementById('info-cita-seleccionada').style.display = 'block';
+            
+            // Llenar automáticamente el paciente en el formulario
+            document.getElementById('venta-paciente-id').value = citaSeleccionada.paciente_id?._id || '';
+            
+            // Agregar automáticamente el servicio principal de la cita
+            agregarServicioDeCita();
+            
+            showMessage('mensaje-venta', 'Cita cargada exitosamente. Servicio principal agregado automáticamente.', 'success');
+        }
+    }
+
+    // Agregar el servicio principal de la cita a la venta
+    function agregarServicioDeCita() {
+        if (!citaSeleccionada || !citaSeleccionada.servicio_id) return;
+        
+        const servicio = citaSeleccionada.servicio_id;
+        const dentista = citaSeleccionada.dentista_id;
+        
+        const item = {
+            tipo: 'servicio',
+            item_id: servicio._id,
+            dentista_id: dentista?._id,
+            descripcion: `${servicio.nombre} - ${dentista?.nombre || 'Dentista asignado'}`,
+            cantidad: 1,
+            precio: servicio.precio,
+            subtotal: servicio.precio,
+            esServicioPrincipal: true
+        };
+        
+        // Verificar si el servicio principal ya está agregado
+        const servicioYaAgregado = itemsVenta.some(item => 
+            item.esServicioPrincipal && item.item_id === servicio._id
+        );
+        
+        if (!servicioYaAgregado) {
+            itemsVenta.push(item);
+            actualizarTablaVenta();
+            calcularTotalVenta();
+        }
+    }
+
+    // Limpiar selección de cita
+    function limpiarSeleccionCita() {
+        citaSeleccionada = null;
+        document.getElementById('select-cita-pendiente').value = '';
+        document.getElementById('info-cita-seleccionada').style.display = 'none';
+        document.getElementById('venta-paciente-id').value = '';
+        
+        // Remover solo el servicio principal si existe
+        itemsVenta = itemsVenta.filter(item => !item.esServicioPrincipal);
+        actualizarTablaVenta();
+        calcularTotalVenta();
+    }
+
+    // Cargar selectores para venta
+    async function cargarSelectoresVenta() {
+        try {
+            const [pacientesData, dentistasData, serviciosData, productosData] = await Promise.all([
+                apiCall('/pacientes'),
+                apiCall('/dentistas'),
+                apiCall('/servicios'),
+                apiCall('/productos')
+            ]);
+
+            // Selector de pacientes
+            const selectPaciente = document.getElementById('venta-paciente-id');
+            selectPaciente.innerHTML = '<option value="">Seleccionar paciente...</option>' +
+                pacientesData.filter(p => p.estatus === 'Activo')
+                .map(p => `<option value="${p._id}">${p.nombre}</option>`)
+                .join('');
+
+            // Selector de servicios adicionales
+            const selectServicioAdicional = document.getElementById('venta-servicio-adicional');
+            selectServicioAdicional.innerHTML = '<option value="">Seleccionar servicio adicional...</option>' +
+                serviciosData.filter(s => s.estatus === 'Activo')
+                .map(s => `<option value="${s._id}" data-precio="${s.precio}">${s.nombre} - ${formatCurrency(s.precio)}</option>`)
+                .join('');
+
+            // Selector de dentistas adicionales
+            const selectDentistaAdicional = document.getElementById('venta-dentista-adicional');
+            selectDentistaAdicional.innerHTML = '<option value="">Seleccionar dentista...</option>' +
+                dentistasData.filter(d => d.estado === 'Activo')
+                .map(d => `<option value="${d._id}">${d.nombre}</option>`)
+                .join('');
+
+            // Selector de productos
+            const selectProducto = document.getElementById('venta-producto-id');
+            selectProducto.innerHTML = '<option value="">Seleccionar producto...</option>' +
+                productosData.filter(p => p.cantidad > 0)
+                .map(p => `<option value="${p._id}" data-precio="${p.precio_venta}" data-stock="${p.cantidad}">${p.nombre} - ${formatCurrency(p.precio_venta)} (Stock: ${p.cantidad})</option>`)
+                .join('');
+
+            // Cargar citas pendientes automáticamente
+            await cargarCitasPendientes();
+
+        } catch (error) {
+            showMessage('mensaje-venta', 'Error al cargar los datos: ' + error.message, 'error');
+        }
+    }
+
+    // Agregar servicio adicional
+    function agregarServicioAdicional() {
+        const selectServicio = document.getElementById('venta-servicio-adicional');
+        const selectDentista = document.getElementById('venta-dentista-adicional');
+        
+        if (!selectServicio.value) {
+            showMessage('mensaje-venta', 'Debe seleccionar un servicio', 'error');
+            return;
+        }
+        
+        const servicioOption = selectServicio.selectedOptions[0];
+        const dentistaTexto = selectDentista.value ? 
+            selectDentista.options[selectDentista.selectedIndex].text : 'Sin dentista específico';
+        const precio = parseFloat(servicioOption.dataset.precio);
+        const servicioTexto = servicioOption.text.split(' - ')[0];
+        
+        const item = {
+            tipo: 'servicio',
+            item_id: selectServicio.value,
+            dentista_id: selectDentista.value || null,
+            descripcion: `${servicioTexto} - ${dentistaTexto}`,
+            cantidad: 1,
+            precio: precio,
+            subtotal: precio,
+            esServicioPrincipal: false
+        };
+        
+        itemsVenta.push(item);
+        actualizarTablaVenta();
+        calcularTotalVenta();
+        
+        // Limpiar selectores
+        selectServicio.value = '';
+        selectDentista.value = '';
+    }
+
+    // Agregar producto
+    function agregarProductoVenta() {
+        const selectProducto = document.getElementById('venta-producto-id');
+        const cantidad = parseInt(document.getElementById('venta-cantidad').value);
+        
+        if (!selectProducto.value || cantidad < 1) {
+            showMessage('mensaje-venta', 'Debe seleccionar un producto y una cantidad válida', 'error');
+            return;
+        }
+        
+        const productoOption = selectProducto.selectedOptions[0];
+        const precio = parseFloat(productoOption.dataset.precio);
+        const stock = parseInt(productoOption.dataset.stock);
+        const productotexto = productoOption.text.split(' - ')[0];
+        
+        if (cantidad > stock) {
+            showMessage('mensaje-venta', `Stock insuficiente. Disponible: ${stock}`, 'error');
+            return;
+        }
+        
+        const item = {
+            tipo: 'producto',
+            item_id: selectProducto.value,
+            descripcion: productotexto,
+            cantidad: cantidad,
+            precio: precio,
+            subtotal: precio * cantidad
+        };
+        
+        itemsVenta.push(item);
+        actualizarTablaVenta();
+        calcularTotalVenta();
+        
+        // Limpiar selector
+        selectProducto.value = '';
+        document.getElementById('venta-cantidad').value = 1;
+    }
+
+    // Actualizar tabla de venta
+    function actualizarTablaVenta() {
+        const tbody = document.getElementById('items-venta-body');
+        
+        if (itemsVenta.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay items agregados</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = itemsVenta.map((item, index) => `
+            <tr>
+                <td>
+                    ${item.tipo}
+                    ${item.esServicioPrincipal ? '<br><small style="color: #27ae60;">(Principal)</small>' : ''}
+                </td>
+                <td>${item.descripcion}</td>
+                <td>${item.cantidad}</td>
+                <td>${formatCurrency(item.precio)}</td>
+                <td>${formatCurrency(item.subtotal)}</td>
+                <td>
+                    ${!item.esServicioPrincipal ? `
+                        <button class="danger" onclick="eliminarItemVenta(${index})">
+                            <i class="ri-delete-bin-fill"></i>
+                        </button>
+                    ` : '<small style="color: #666;">No se puede eliminar</small>'}
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Función para alternar IVA
+    function toggleIVA() {
+        aplicarIVA = !aplicarIVA;
+        const ivaToggle = document.getElementById('iva-toggle');
+        const ivaLabel = document.getElementById('iva-label');
+        
+        if (aplicarIVA) {
+            ivaToggle.checked = true;
+            ivaLabel.innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
+            ivaLabel.style.color = '#27ae60';
+        } else {
+            ivaToggle.checked = false;
+            ivaLabel.innerHTML = '<i class="ri-checkbox-blank-line"></i> Sin IVA';
+            ivaLabel.style.color = '#666';
+        }
+        
+        calcularTotalVenta();
+    }
+
+    // Calcular totales y cambio
+    function calcularTotalVenta() {
+        const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
+        const iva = aplicarIVA ? subtotal * 0.16 : 0;
+        const total = subtotal + iva;
+
+        document.getElementById('venta-subtotal').value = formatCurrency(subtotal);
+        document.getElementById('venta-iva').value = formatCurrency(iva);
+        document.getElementById('venta-total').value = formatCurrency(total);
+
+        // Calcular cambio
+        const montoPagado = parseFloat(document.getElementById('venta-monto-pagado').value) || 0;
+        const cambio = Math.max(0, montoPagado - total);
+        document.getElementById('venta-cambio').value = formatCurrency(cambio);
+    }
+
+    // Eliminar item de venta
+    function eliminarItemVenta(index) {
+        if (itemsVenta[index].esServicioPrincipal) {
+            showMessage('mensaje-venta', 'No se puede eliminar el servicio principal de la cita', 'error');
+            return;
+        }
+        itemsVenta.splice(index, 1);
+        actualizarTablaVenta();
+        calcularTotalVenta();
+    }
+
+    // Limpiar formulario completo
+    function limpiarFormularioVenta() {
+        if (confirm('¿Está seguro de que desea limpiar todo el formulario? Se perderán todos los datos.')) {
+            itemsVenta = [];
+            citaSeleccionada = null;
+            aplicarIVA = true;
+            document.getElementById('form-nueva-venta').reset();
+            document.getElementById('select-cita-pendiente').value = '';
+            document.getElementById('info-cita-seleccionada').style.display = 'none';
+            document.getElementById('iva-toggle').checked = true;
+            document.getElementById('iva-label').innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
+            document.getElementById('iva-label').style.color = '#27ae60';
+            actualizarTablaVenta();
+            calcularTotalVenta();
+            showMessage('mensaje-venta', 'Formulario limpiado exitosamente', 'success');
+        }
+    }
+
+    // Form handler para ventas
+    document.getElementById('form-nueva-venta').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (itemsVenta.length === 0) {
+            showMessage('mensaje-venta', 'Debe agregar al menos un item a la venta', 'error');
+            return;
+        }
+
+        const metodoPago = document.getElementById('venta-metodo-pago').value;
+        const montoPagado = parseFloat(document.getElementById('venta-monto-pagado').value) || 0;
+        const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
+        const total = aplicarIVA ? subtotal * 1.16 : subtotal;
+
+        if (!metodoPago) {
+            showMessage('mensaje-venta', 'Debe seleccionar un método de pago', 'error');
+            return;
+        }
+
+        // El monto pagado es opcional, si es 0 se considera como pendiente de pago
+        const estatusVenta = montoPagado >= total ? 'pagada' : 'pendiente';
+
+        if (montoPagado > 0 && montoPagado < total) {
+            showMessage('mensaje-venta', `El monto pagado (${formatCurrency(montoPagado)}) es menor al total (${formatCurrency(total)})`, 'error');
+            return;
+        }
+
+        setButtonLoading('btn-guardar-venta', true);
+
+        try {
+            const formData = new FormData(e.target);
+            const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
+            const iva = aplicarIVA ? subtotal * 0.16 : 0;
+            const total = subtotal + iva;
+            const montoPagado = parseFloat(formData.get('monto_pagado')) || 0;
+            const cambio = Math.max(0, montoPagado - total);
+
+            const ventaData = {
+                paciente_id: formData.get('paciente_id') || null,
+                cita_id: citaSeleccionada?._id || null,
+                items: itemsVenta.map(item => ({
+                    tipo: item.tipo,
+                    item_id: item.item_id,
+                    descripcion: item.descripcion,
+                    cantidad: item.cantidad,
+                    precio: item.precio,
+                    subtotal: item.subtotal,
+                    dentista_id: item.dentista_id || null
+                })),
+                subtotal: subtotal,
+                iva: iva,
+                total: total,
+                metodo_pago: formData.get('metodo_pago'),
+                monto_pagado: montoPagado,
+                cambio: cambio,
+                fecha_venta: new Date().toISOString(),
+                estatus: estatusVenta
+            };
+
+            // 1. Crear la venta
+            const ventaCreada = await apiCall('/ventas', {
+                method: 'POST',
+                body: JSON.stringify(ventaData)
+            });
+
+            // 2. Si hay cita seleccionada, actualizar su estado a "Completada"
+            if (citaSeleccionada && estatusVenta === 'pagada') {
+                await apiCall(`/citas/${citaSeleccionada._id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ 
+                        estatus: 'Completada',
+                        fecha_actualizacion: new Date()
+                    })
+                });
+            }
+
+            let mensajeExito = 'Venta procesada exitosamente! ';
+            if (citaSeleccionada && estatusVenta === 'pagada') {
+                mensajeExito += 'Cita marcada como completada. ';
+            }
+            if (estatusVenta === 'pendiente') {
+                mensajeExito += 'La venta queda como pendiente de pago.';
+            }
+
+            showMessage('mensaje-venta', mensajeExito, 'success');
+            
+            // Limpiar formulario
+            itemsVenta = [];
+            citaSeleccionada = null;
+            aplicarIVA = true;
+            document.getElementById('form-nueva-venta').reset();
+            document.getElementById('select-cita-pendiente').value = '';
+            document.getElementById('info-cita-seleccionada').style.display = 'none';
+            document.getElementById('iva-toggle').checked = true;
+            document.getElementById('iva-label').innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
+            document.getElementById('iva-label').style.color = '#27ae60';
+            actualizarTablaVenta();
+            calcularTotalVenta();
+
+            // Recargar citas pendientes
+            await cargarCitasPendientes();
+
+        } catch (error) {
+            showMessage('mensaje-venta', 'Error al procesar venta: ' + error.message, 'error');
+        } finally {
+            setButtonLoading('btn-guardar-venta', false);
+        }
+    });
+
+    // Event listeners para calcular automáticamente
+    document.getElementById('venta-monto-pagado').addEventListener('input', calcularTotalVenta);
+    document.getElementById('iva-toggle').addEventListener('change', toggleIVA);
+
+    // ==================== HISTORIAL DE VENTAS ====================
+    async function cargarVentas() {
+        showLoading('loading-ventas', true);
+        setButtonLoading('btn-cargar-ventas', true);
+
+        try {
+            const ventasData = await apiCall('/ventas');
+            const tbody = document.getElementById('ventas-body');
+            
+            if (ventasData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay ventas registradas</td></tr>';
+                return;
+            }
+
+            // Calcular estadísticas
+            const totalVentas = ventasData.reduce((sum, venta) => sum + venta.total, 0);
+            const ventasEfectivo = ventasData
+                .filter(v => v.metodo_pago === 'efectivo')
+                .reduce((sum, venta) => sum + venta.total, 0);
+            const ventasTarjeta = ventasData
+                .filter(v => v.metodo_pago === 'tarjeta')
+                .reduce((sum, venta) => sum + venta.total, 0);
+
+            document.getElementById('total-ventas').textContent = formatCurrency(totalVentas);
+            document.getElementById('total-efectivo').textContent = formatCurrency(ventasEfectivo);
+            document.getElementById('total-tarjeta').textContent = formatCurrency(ventasTarjeta);
+
+            tbody.innerHTML = ventasData.map(venta => `
+                <tr>
+                    <td>${new Date(venta.fecha_venta).toLocaleDateString()}</td>
+                    <td>${venta.paciente_id?.nombre || 'No especificado'}</td>
+                    <td>${venta.items.length} items</td>
+                    <td>${venta.metodo_pago}</td>
+                    <td>${formatCurrency(venta.total)}</td>
+                    <td>
+                        <span class="status-badge ${venta.estatus === 'pagada' ? 'status-success' : 'status-warning'}" style="margin-right: 10px;">
+                            ${venta.estatus === 'pagada' ? 'Pagada' : 'Pendiente'}
+                        </span>
+                        <button onclick="verDetallesVenta('${venta._id}')" class="secondary">Ver Detalles</button>
+                        ${venta.estatus === 'pendiente' ? 
+                            `<button onclick="marcarVentaPagada('${venta._id}')" class="success">Marcar Pagada</button>` : 
+                            ''
+                        }
+                    </td>
+                </tr>
+            `).join('');
+
+        } catch (error) {
+            showMessage('mensaje-venta', 'Error al cargar ventas: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-ventas', false);
+            setButtonLoading('btn-cargar-ventas', false);
+        }
+    }
+
+    // ==================== CORTE DE CAJA ====================
+    async function generarCorteCaja() {
+        showLoading('loading-corte', true);
+        setButtonLoading('btn-generar-corte', true);
+
+        try {
+            const fecha = document.getElementById('fecha-corte').value;
+            if (!fecha) {
+                showMessage('mensaje-venta', 'Debe seleccionar una fecha', 'error');
+                return;
+            }
+
+            const corte = await apiCall(`/ventas/corte-caja?fecha=${fecha}`);
+            
+            document.getElementById('corte-efectivo').textContent = formatCurrency(corte.efectivo || 0);
+            document.getElementById('corte-tarjeta').textContent = formatCurrency(corte.tarjeta || 0);
+            document.getElementById('corte-total').textContent = formatCurrency(corte.total || 0);
+
+            const detalle = document.getElementById('detalle-corte');
+            detalle.innerHTML = `
+                <div class="card">
+                    <h3>Detalle del Corte - ${fecha}</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Hora</th>
+                                <th>Concepto</th>
+                                <th>Método Pago</th>
+                                <th>Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${corte.detalle ? corte.detalle.map(item => `
+                                <tr>
+                                    <td>${new Date(item.fecha_venta).toLocaleTimeString()}</td>
+                                    <td>${item.descripcion}</td>
+                                    <td>${item.metodo_pago}</td>
+                                    <td>${formatCurrency(item.total)}</td>
+                                </tr>
+                            `).join('') : '<tr><td colspan="4" style="text-align: center;">No hay ventas para esta fecha</td></tr>'}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            document.getElementById('resultado-corte').style.display = 'block';
+
+        } catch (error) {
+            showMessage('mensaje-venta', 'Error al generar corte de caja: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-corte', false);
+            setButtonLoading('btn-generar-corte', false);
+        }
+    }
+
+    // ==================== NÓMINA ====================
+    async function calcularNomina() {
+        showLoading('loading-nomina', true);
+        setButtonLoading('btn-calcular-nomina', true);
+
+        try {
+            const fechaInicio = document.getElementById('fecha-inicio-nomina').value;
+            const fechaFin = document.getElementById('fecha-fin-nomina').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                showMessage('mensaje-nomina', 'Debe seleccionar ambas fechas', 'error');
+                return;
+            }
+
+            const nomina = await apiCall(`/nomina/calcular?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`);
+            
+            const tbody = document.getElementById('nomina-body');
+            let totalNomina = 0;
+            let dentistasActivos = 0;
+            let comisionesPendientes = 0;
+
+            if (nomina.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay datos de nómina para el periodo seleccionado</td></tr>';
+            } else {
+                tbody.innerHTML = nomina.map(dentista => {
+                    totalNomina += dentista.comision_ganada;
+                    if (dentista.estado === 'Activo') dentistasActivos++;
+                    if (dentista.estatus_pago === 'Pendiente') comisionesPendientes += dentista.comision_ganada;
+                    
+                    return `
+                        <tr>
+                            <td>${dentista.nombre}</td>
+                            <td>${dentista.cantidad_ventas || 0}</td>
+                            <td>${formatCurrency(dentista.total_ventas || 0)}</td>
+                            <td>${dentista.comision}%</td>
+                            <td>${formatCurrency(dentista.comision_ganada || 0)}</td>
+                            <td>${dentista.estatus_pago || 'Pendiente'}</td>
+                            <td>
+                                <button onclick="pagarComision('${dentista._id}')" class="success">Pagar</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('total-nomina').textContent = formatCurrency(totalNomina);
+            document.getElementById('dentistas-activos').textContent = dentistasActivos;
+            document.getElementById('comisiones-pendientes').textContent = formatCurrency(comisionesPendientes);
+            document.getElementById('resultado-nomina').style.display = 'block';
+
+        } catch (error) {
+            showMessage('mensaje-nomina', 'Error al calcular nómina: ' + error.message, 'error');
+        } finally {
+            showLoading('loading-nomina', false);
+            setButtonLoading('btn-calcular-nomina', false);
+        }
+    }
+
+    // ==================== FUNCIONES AUXILIARES ====================
+    function cerrarModal() {
+        document.getElementById('modal-detalles').style.display = 'none';
+    }
+
+    async function verDetallesVenta(ventaId) {
+        try {
+            const venta = await apiCall(`/ventas/${ventaId}`);
+            const modal = document.getElementById('modal-detalles');
+            const modalBody = document.getElementById('modal-body');
+            
+            modalBody.innerHTML = `
+                <h3>Detalles de Venta</h3>
+                <p><strong>Fecha:</strong> ${new Date(venta.fecha_venta).toLocaleString()}</p>
+                <p><strong>Paciente:</strong> ${venta.paciente_id?.nombre || 'No especificado'}</p>
+                <p><strong>Método de Pago:</strong> ${venta.metodo_pago}</p>
+                <p><strong>Subtotal:</strong> ${formatCurrency(venta.subtotal)}</p>
+                <p><strong>IVA:</strong> ${formatCurrency(venta.iva)}</p>
+                <p><strong>Total:</strong> ${formatCurrency(venta.total)}</p>
+                <p><strong>Monto Pagado:</strong> ${formatCurrency(venta.monto_pagado || 0)}</p>
+                <p><strong>Cambio:</strong> ${formatCurrency(venta.cambio || 0)}</p>
+                <p><strong>Estatus:</strong> <span class="status-badge ${venta.estatus === 'pagada' ? 'status-success' : 'status-warning'}">${venta.estatus}</span></p>
+                <h4>Items:</h4>
+                <ul>
+                    ${venta.items.map(item => `
+                        <li>${item.descripcion} - ${item.cantidad} x ${formatCurrency(item.precio)} = ${formatCurrency(item.subtotal)}</li>
+                    `).join('')}
+                </ul>
+            `;
+            
+            modal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error al cargar detalles de venta:', error);
+            showMessage('mensaje-venta', 'Error al cargar detalles: ' + error.message, 'error');
+        }
+    }
+
+    async function marcarVentaPagada(ventaId) {
+        try {
+            await apiCall(`/ventas/${ventaId}/pagar`, { method: 'PUT' });
+            showMessage('mensaje-venta', 'Venta marcada como pagada', 'success');
+            cargarVentas();
+        } catch (error) {
+            showMessage('mensaje-venta', 'Error al marcar venta como pagada: ' + error.message, 'error');
+        }
+    }
+
+    async function pagarComision(dentistaId) {
+        if (confirm('¿Desea marcar esta comisión como pagada?')) {
+            try {
+                await apiCall(`/nomina/pagar/${dentistaId}`, { method: 'PUT' });
+                showMessage('mensaje-nomina', 'Comisión marcada como pagada', 'success');
+                calcularNomina();
+            } catch (error) {
+                showMessage('mensaje-nomina', 'Error al pagar comisión: ' + error.message, 'error');
+            }
+        }
+    }
+
+    // Funciones para eliminar
+    async function eliminarPaciente(id) {
+        if (confirm('¿Está seguro de que desea eliminar este paciente?')) {
+            try {
+                await apiCall(`/pacientes/${id}`, { method: 'DELETE' });
+                showMessage('mensaje-paciente', 'Paciente eliminado exitosamente', 'success');
+                cargarPacientes();
+            } catch (error) {
+                showMessage('mensaje-paciente', 'Error al eliminar paciente: ' + error.message, 'error');
+            }
+        }
+    }
+
+    async function eliminarDentista(id) {
+        if (confirm('¿Está seguro de que desea eliminar este dentista?')) {
+            try {
+                await apiCall(`/dentistas/${id}`, { method: 'DELETE' });
+                showMessage('mensaje-dentista', 'Dentista eliminado exitosamente', 'success');
+                cargarDentistas();
+            } catch (error) {
+                showMessage('mensaje-dentista', 'Error al eliminar dentista: ' + error.message, 'error');
+            }
+        }
+    }
+
+    async function eliminarServicio(id) {
+        if (confirm('¿Está seguro de que desea eliminar este servicio?')) {
+            try {
+                await apiCall(`/servicios/${id}`, { method: 'DELETE' });
+                showMessage('mensaje-servicio', 'Servicio eliminado exitosamente', 'success');
+                cargarServicios();
+            } catch (error) {
+                showMessage('mensaje-servicio', 'Error al eliminar servicio: ' + error.message, 'error');
+            }
+        }
+    }
+
+    async function eliminarProducto(id) {
+        if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+            try {
+                await apiCall(`/productos/${id}`, { method: 'DELETE' });
+                showMessage('mensaje-producto', 'Producto eliminado exitosamente', 'success');
+                cargarProductos();
+            } catch (error) {
+                showMessage('mensaje-producto', 'Error al eliminar producto: ' + error.message, 'error');
+            }
+        }
+    }
+
+    async function cancelarCita(id) {
+        if (confirm('¿Está seguro de que desea cancelar esta cita?')) {
+            try {
+                await apiCall(`/citas/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ estatus: 'Cancelada' })
+                });
+                showMessage('mensaje-cita', 'Cita cancelada exitosamente', 'success');
+                cargarCitas();
+            } catch (error) {
+                showMessage('mensaje-cita', 'Error al cancelar cita: ' + error.message, 'error');
+            }
+        }
+    }
+
+    // Funciones de edición (placeholder)
+    function editarPaciente(id) {
+        alert(`Editar paciente con ID: ${id} - Funcionalidad en desarrollo`);
+    }
+
+    function editarDentista(id) {
+        alert(`Editar dentista con ID: ${id} - Funcionalidad en desarrollo`);
+    }
+
+    function editarServicio(id) {
+        alert(`Editar servicio con ID: ${id} - Funcionalidad en desarrollo`);
+    }
+
+    function editarProducto(id) {
+        alert(`Editar producto con ID: ${id} - Funcionalidad en desarrollo`);
+    }
+
+    // ==================== INICIALIZACIÓN ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar autenticación
+        if (!checkAuth()) {
+            return;
+        }
+
+        // Establecer fecha actual en el campo de corte de caja
+        const hoy = new Date().toISOString().split('T')[0];
+        document.getElementById('fecha-corte').value = hoy;
+        
+        // Probar conexión inicial
+        setTimeout(() => {
+            apiCall('/health').then(() => {
+                updateConnectionStatus(true);
+            }).catch(() => {
+                updateConnectionStatus(false);
+            });
+        }, 1000);
+        
+        // Cargar la vista inicial
+        showView('ver-citas');
+    });
+</script>
+</body>
+</html>
