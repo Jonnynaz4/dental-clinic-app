@@ -26,7 +26,7 @@ if (!MONGODB_URI) {
 // Middleware
 app.use(cors({
     origin: [
-        'https://whimsical-phoenix-1e9b16.netlify.app',
+        'https://cozy-smakager-e1db95.netlify.app/',
         'https://dental-clinic-app-production.up.railway.app',
         'http://localhost:3000'
     ],
