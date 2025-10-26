@@ -26,7 +26,7 @@ if (!MONGODB_URI) {
 // Middleware
 app.use(cors({
     origin: [
-        'https://dental-clinic-app-amber.vercel.app/',
+        'https://dental-clinic-app-amber.vercel.app',
         'https://dental-clinic-app-production.up.railway.app',
         'http://localhost:3000'
     ],
