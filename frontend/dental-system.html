@@ -670,6 +670,22 @@
             background: #fadbd8;
             color: #e74c3c;
         }
+        .logo-container-sidebar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0;
+}
+
+.sidebar-logo {
+    max-width: 85%;           /* Tamaño más pequeño para sidebar */
+    height: auto;
+    border-radius: 8px;
+}
+
+.sidebar.collapsed .sidebar-logo {
+    max-width: 32px;          /* Aún más pequeño cuando está colapsado */
+}
     </style>
 </head>
 <body>
@@ -682,12 +698,11 @@
     <!-- Modern Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <div class="logo">
-                <div class="logo-icon">
-                    <i class="ri-tooth-fill"></i>
-                </div>
-                <div class="logo-text">DentalClinic</div>
-            </div>
+           <div class="logo">
+    <div class="logo-container-sidebar">
+        <img src="assets/images/logo.png" alt="Dental Clinic" class="sidebar-logo">
+    </div>
+</div>
         </div>
         
         <div class="sidebar-content">
@@ -1092,249 +1107,392 @@
             </div>
 
             <!-- Nueva Venta - VERSIÓN MEJORADA -->
-            <div id="nueva-venta" class="view">
-                <h1><i class="ri-shopping-cart-fill"></i> Nueva Venta</h1>
-                
-                <!-- Selección de Cita Pendiente -->
-                <div class="seccion-venta">
-                    <h3><i class="ri-calendar-check-fill"></i> Seleccionar Cita Pendiente</h3>
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Buscar Cita Pendiente:</label>
-                            <select id="select-cita-pendiente" onchange="cargarDatosCita()">
-                                <option value="">Seleccionar cita pendiente...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button type="button" onclick="cargarCitasPendientes()" class="secondary">
-                                <i class="ri-refresh-line"></i> Actualizar Citas
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Información de la Cita Seleccionada -->
-                <div id="info-cita-seleccionada" class="cita-seleccionada" style="display: none;">
-                    <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
-                        <h4 style="margin: 0; color: #2d7af9;">
-                            <i class="ri-information-fill"></i> Cita Seleccionada
-                        </h4>
-                        <button type="button" onclick="limpiarSeleccionCita()" class="danger" style="padding: 5px 10px;">
-                            <i class="ri-close-line"></i> Cambiar Cita
-                        </button>
-                    </div>
-                    <div class="cita-info">
-                        <div class="info-item">
-                            <span class="info-label">Paciente:</span>
-                            <span class="info-value" id="cita-paciente">-</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Dentista:</span>
-                            <span class="info-value" id="cita-dentista">-</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Servicio Principal:</span>
-                            <span class="info-value" id="cita-servicio">-</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Fecha y Hora:</span>
-                            <span class="info-value" id="cita-fecha">-</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Descripción:</span>
-                            <span class="info-value" id="cita-descripcion">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <form id="form-nueva-venta">
-                    <!-- Información de la Venta -->
-                    <div class="seccion-venta">
-                        <h3><i class="ri-file-info-fill"></i> Información de la Venta</h3>
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label>Paciente:</label>
-                                <select id="venta-paciente-id" name="paciente_id" required>
-                                    <option value="">Seleccionar paciente...</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Método de Pago:</label>
-                                <select id="venta-metodo-pago" name="metodo_pago" required>
-                                    <option value="">Seleccionar método...</option>
-                                    <option value="efectivo">Efectivo</option>
-                                    <option value="tarjeta">Tarjeta</option>
-                                    <option value="transferencia">Transferencia</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Servicios Adicionales -->
-                    <div class="seccion-venta">
-                        <h3><i class="ri-service-fill"></i> Agregar Servicios Adicionales</h3>
-                        <div class="agregar-items">
-                            <div class="grid-2">
-                                <div class="form-group">
-                                    <label>Servicio:</label>
-                                    <select id="venta-servicio-adicional">
-                                        <option value="">Seleccionar servicio adicional...</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Dentista:</label>
-                                    <select id="venta-dentista-adicional">
-                                        <option value="">Seleccionar dentista...</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="button" onclick="agregarServicioAdicional()" class="success">
-                                <i class="ri-add-fill"></i> Agregar Servicio
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Productos -->
-                    <div class="seccion-venta">
-                        <h3><i class="ri-store-2-fill"></i> Agregar Productos</h3>
-                        <div class="agregar-items">
-                            <div class="grid-2">
-                                <div class="form-group">
-                                    <label>Producto:</label>
-                                    <select id="venta-producto-id">
-                                        <option value="">Seleccionar producto...</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Cantidad:</label>
-                                    <input type="number" id="venta-cantidad" value="1" min="1">
-                                </div>
-                            </div>
-                            <button type="button" onclick="agregarProductoVenta()" class="success">
-                                <i class="ri-add-fill"></i> Agregar Producto
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Resumen de la Venta -->
-                    <div class="seccion-venta">
-                        <h3><i class="ri-file-list-3-fill"></i> Resumen de la Venta</h3>
-                        
-                        <!-- Items de la venta -->
-                        <table id="tabla-items-venta">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Descripción</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio Unitario</th>
-                                    <th>Subtotal</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="items-venta-body">
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">No hay items agregados</td>
-                                </tr>
-                            </tbody>
-                        </table>
-
-                        <!-- Configuración de IVA -->
-                        <div class="iva-toggle">
-                            <input type="checkbox" id="iva-toggle" checked>
-                            <label for="iva-toggle" id="iva-label">
-                                <i class="ri-checkbox-fill"></i> IVA Incluido (16%)
-                            </label>
-                        </div>
-
-                        <!-- Totales -->
-                        <div class="grid-3" style="margin-top: 20px;">
-                            <div class="form-group">
-                                <label>Subtotal:</label>
-                                <input type="text" id="venta-subtotal" value="$0.00" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label>IVA (16%):</label>
-                                <input type="text" id="venta-iva" value="$0.00" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label>Total:</label>
-                                <input type="text" id="venta-total" value="$0.00" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sección de Cobro (AHORA DEBAJO DE LOS ARTÍCULOS) -->
-                    <div class="cobro-section">
-                        <h3><i class="ri-money-dollar-circle-fill"></i> Información de Cobro</h3>
-                        <div class="grid-2">
-                            <div class="form-group">
-                                <label>Monto Pagado:</label>
-                                <input type="number" id="venta-monto-pagado" name="monto_pagado" step="0.01" min="0" value="0">
-                                <small style="color: #666;">Dejar en 0 para venta pendiente</small>
-                            </div>
-                            <div class="form-group">
-                                <label>Cambio:</label>
-                                <input type="text" id="venta-cambio" value="$0.00" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Botones de acción -->
-                    <div style="display: flex; gap: 15px; margin-top: 20px;">
-                        <button type="submit" id="btn-guardar-venta" class="success">
-                            <i class="ri-money-dollar-circle-fill"></i> Procesar Venta
-                        </button>
-                        <button type="button" onclick="limpiarFormularioVenta()" class="secondary">
-                            <i class="ri-eraser-fill"></i> Limpiar Todo
-                        </button>
-                    </div>
-                </form>
-                <div id="mensaje-venta"></div>
+            <!-- Nueva Venta - VERSIÓN MEJORADA CON MÚLTIPLES MONEDAS -->
+<div id="nueva-venta" class="view">
+    <h1><i class="ri-shopping-cart-fill"></i> Nueva Venta</h1>
+    
+    <!-- Selección de Cita Pendiente -->
+    <div class="seccion-venta">
+        <h3><i class="ri-calendar-check-fill"></i> Seleccionar Cita Pendiente</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Buscar Cita Pendiente:</label>
+                <select id="select-cita-pendiente" onchange="cargarDatosCita()">
+                    <option value="">Seleccionar cita pendiente...</option>
+                </select>
             </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" onclick="cargarCitasPendientes()" class="secondary">
+                    <i class="ri-refresh-line"></i> Actualizar Citas
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información de la Cita Seleccionada -->
+    <div id="info-cita-seleccionada" class="cita-seleccionada" style="display: none;">
+        <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 10px;">
+            <h4 style="margin: 0; color: #2d7af9;">
+                <i class="ri-information-fill"></i> Cita Seleccionada
+            </h4>
+            <button type="button" onclick="limpiarSeleccionCita()" class="danger" style="padding: 5px 10px;">
+                <i class="ri-close-line"></i> Cambiar Cita
+            </button>
+        </div>
+        <div class="cita-info">
+            <div class="info-item">
+                <span class="info-label">Paciente:</span>
+                <span class="info-value" id="cita-paciente">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Dentista:</span>
+                <span class="info-value" id="cita-dentista">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Servicio Principal:</span>
+                <span class="info-value" id="cita-servicio">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Fecha y Hora:</span>
+                <span class="info-value" id="cita-fecha">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Descripción:</span>
+                <span class="info-value" id="cita-descripcion">-</span>
+            </div>
+        </div>
+    </div>
+
+    <form id="form-nueva-venta">
+        <!-- Información de la Venta -->
+        <div class="seccion-venta">
+    <h3><i class="ri-file-info-fill"></i> Información de la Venta</h3>
+    <div class="grid-3">
+        <div class="form-group">
+            <label>Paciente:</label>
+            <select id="venta-paciente-id" name="paciente_id" required>
+                <option value="">Seleccionar paciente...</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Método de Pago:</label>
+            <select id="venta-metodo-pago" name="metodo_pago" required>
+                <option value="">Seleccionar método...</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="transferencia">Transferencia</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Moneda:</label>
+            <select id="venta-moneda" name="moneda" required onchange="actualizarMoneda()">
+                <option value="MXN">Pesos Mexicanos (MXN)</option>
+                <option value="USD">Dólares Americanos (USD)</option>
+            </select>
+        </div>
+    </div>
+    
+    <!-- Tipo de Cambio (solo visible para USD) -->
+    <div id="tipo-cambio-group" style="display: none; margin-top: 15px;">
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Tipo de Cambio (MXN por 1 USD):</label>
+                <input type="number" id="venta-tipo-cambio" name="tipo_cambio" step="0.01" min="1" value="20.0" onchange="recalcularPrecios()">
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <button type="button" onclick="obtenerTipoCambioActual()" class="secondary" style="margin-top: 8px;">
+                    <i class="ri-refresh-line"></i> Obtener Tipo Actual
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Información de Moneda -->
+    <div id="info-moneda" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; display: none;">
+        <small style="color: #666;">
+            <i class="ri-information-line"></i> 
+            <span id="texto-info-moneda">Venta en Pesos Mexicanos (MXN)</span>
+        </small>
+    </div>
+</div>
+
+        <!-- Servicios Adicionales -->
+        <div class="seccion-venta">
+            <h3><i class="ri-service-fill"></i> Agregar Servicios Adicionales</h3>
+            <div class="agregar-items">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Servicio:</label>
+                        <select id="venta-servicio-adicional">
+                            <option value="">Seleccionar servicio adicional...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Dentista:</label>
+                        <select id="venta-dentista-adicional">
+                            <option value="">Seleccionar dentista...</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" onclick="agregarServicioAdicional()" class="success">
+                    <i class="ri-add-fill"></i> Agregar Servicio
+                </button>
+            </div>
+        </div>
+
+        <!-- Productos -->
+        <div class="seccion-venta">
+            <h3><i class="ri-store-2-fill"></i> Agregar Productos</h3>
+            <div class="agregar-items">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Producto:</label>
+                        <select id="venta-producto-id">
+                            <option value="">Seleccionar producto...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Cantidad:</label>
+                        <input type="number" id="venta-cantidad" value="1" min="1">
+                    </div>
+                </div>
+                <button type="button" onclick="agregarProductoVenta()" class="success">
+                    <i class="ri-add-fill"></i> Agregar Producto
+                </button>
+            </div>
+        </div>
+
+        <!-- Resumen de la Venta -->
+        <div class="seccion-venta">
+            <h3><i class="ri-file-list-3-fill"></i> Resumen de la Venta</h3>
+            
+            <!-- Items de la venta -->
+            <table id="tabla-items-venta">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Cantidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Subtotal</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="items-venta-body">
+                    <tr>
+                        <td colspan="6" style="text-align: center;">No hay items agregados</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Configuración de IVA -->
+            <div class="iva-toggle">
+                <input type="checkbox" id="iva-toggle" checked>
+                <label for="iva-toggle" id="iva-label">
+                    <i class="ri-checkbox-fill"></i> IVA Incluido (16%)
+                </label>
+            </div>
+
+            <!-- Totales -->
+            <div class="grid-3" style="margin-top: 20px;">
+                <div class="form-group">
+                    <label>Subtotal:</label>
+                    <input type="text" id="venta-subtotal" value="$0.00" readonly>
+                </div>
+                <div class="form-group">
+                    <label>IVA (16%):</label>
+                    <input type="text" id="venta-iva" value="$0.00" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Total:</label>
+                    <input type="text" id="venta-total" value="$0.00" readonly>
+                </div>
+            </div>
+            
+            <!-- Información de Moneda -->
+            <div id="info-moneda" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; display: none;">
+                <small style="color: #666;">
+                    <i class="ri-information-line"></i> 
+                    <span id="texto-info-moneda">Venta en Pesos Mexicanos (MXN)</span>
+                </small>
+            </div>
+        </div>
+
+        <!-- Sección de Cobro -->
+        <div class="cobro-section">
+            <h3><i class="ri-money-dollar-circle-fill"></i> Información de Cobro</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Monto Pagado:</label>
+                    <input type="number" id="venta-monto-pagado" name="monto_pagado" step="0.01" min="0" value="0" oninput="calcularTotalVenta()">
+                    <small style="color: #666;">Dejar en 0 para venta pendiente</small>
+                </div>
+                <div class="form-group">
+                    <label>Cambio:</label>
+                    <input type="text" id="venta-cambio" value="$0.00" readonly>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button type="submit" id="btn-guardar-venta" class="success">
+                <i class="ri-money-dollar-circle-fill"></i> Procesar Venta
+            </button>
+            <button type="button" onclick="limpiarFormularioVenta()" class="secondary">
+                <i class="ri-eraser-fill"></i> Limpiar Todo
+            </button>
+        </div>
+    </form>
+    <div id="mensaje-venta"></div>
+</div>
 
             <!-- Historial de Ventas -->
-            <div id="ventas" class="view">
-                <h1><i class="ri-money-dollar-circle-fill"></i> Historial de Ventas</h1>
-                <div class="grid-3">
-                    <div class="card stat-card">
-                        <div class="stat-number" id="total-ventas">$0.00</div>
-                        <div class="stat-label">Total Ventas</div>
-                    </div>
-                    <div class="card stat-card">
-                        <div class="stat-number" id="total-efectivo">$0.00</div>
-                        <div class="stat-label">Ventas en Efectivo</div>
-                    </div>
-                    <div class="card stat-card">
-                        <div class="stat-number" id="total-tarjeta">$0.00</div>
-                        <div class="stat-label">Ventas con Tarjeta</div>
-                    </div>
-                </div>
-                <button onclick="cargarVentas()" id="btn-cargar-ventas">
-                    <i class="ri-refresh-line"></i> Cargar Ventas
-                </button>
-                <div id="loading-ventas" style="display: none;">
-                    <div class="loading"></div> Cargando ventas...
-                </div>
-                <table id="tabla-ventas">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Paciente</th>
-                            <th>Items</th>
-                            <th>Método Pago</th>
-                            <th>Total</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ventas-body">
-                        <tr>
-                            <td colspan="6" style="text-align: center;">Cargando ventas...</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Historial de Ventas - VERSIÓN MEJORADA CON FILTROS -->
+<div id="ventas" class="view">
+    <h1><i class="ri-money-dollar-circle-fill"></i> Historial de Ventas</h1>
+    
+    <!-- Estadísticas por Moneda -->
+    <div class="grid-3">
+        <div class="card stat-card">
+            <div class="stat-number" id="total-mxn">$0.00</div>
+            <div class="stat-label">Total en MXN</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-number" id="total-usd">$0.00</div>
+            <div class="stat-label">Total en USD</div>
+        </div>
+        <div class="card stat-card">
+            <div class="stat-number" id="total-ventas">0</div>
+            <div class="stat-label">Ventas Totales</div>
+        </div>
+    </div>
+
+    <!-- Filtros de Búsqueda -->
+    <div class="filtros-ventas" style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 1.5rem 0;">
+        <h3 style="margin-bottom: 1rem; color: #2d3748;">
+            <i class="ri-filter-fill"></i> Filtros de Búsqueda
+        </h3>
+        
+        <div class="grid-3" style="margin-bottom: 1rem;">
+            <div class="form-group">
+                <label>Fecha Inicio:</label>
+                <input type="date" id="filtro-fecha-inicio">
             </div>
+            <div class="form-group">
+                <label>Fecha Fin:</label>
+                <input type="date" id="filtro-fecha-fin">
+            </div>
+            <div class="form-group">
+                <label>Moneda:</label>
+                <select id="filtro-moneda">
+                    <option value="">Todas las monedas</option>
+                    <option value="MXN">Pesos (MXN)</option>
+                    <option value="USD">Dólares (USD)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="grid-3">
+            <div class="form-group">
+                <label>Método de Pago:</label>
+                <select id="filtro-metodo-pago">
+                    <option value="">Todos los métodos</option>
+                    <option value="efectivo">Efectivo</option>
+                    <option value="tarjeta">Tarjeta</option>
+                    <option value="transferencia">Transferencia</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Estatus:</label>
+                <select id="filtro-estatus">
+                    <option value="">Todos los estatus</option>
+                    <option value="pagada">Pagada</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="cancelada">Cancelada</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>&nbsp;</label>
+                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                    <button onclick="aplicarFiltrosVentas()" class="success" style="flex: 1;">
+                        <i class="ri-filter-fill"></i> Aplicar Filtros
+                    </button>
+                    <button onclick="limpiarFiltrosVentas()" class="secondary" style="flex: 1;">
+                        <i class="ri-eraser-fill"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Resumen de Filtros Aplicados -->
+        <div id="resumen-filtros" style="margin-top: 1rem; padding: 0.75rem; background: #f7fafc; border-radius: 6px; display: none;">
+            <small style="color: #4a5568;">
+                <i class="ri-information-line"></i> 
+                <span id="texto-filtros-aplicados"></span>
+            </small>
+        </div>
+    </div>
+
+    <!-- Controles -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <button onclick="cargarVentas()" id="btn-cargar-ventas" class="secondary">
+            <i class="ri-refresh-line"></i> Actualizar
+        </button>
+        
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span style="font-size: 0.9rem; color: #4a5568;">
+                <span id="contador-ventas">0</span> ventas encontradas
+            </span>
+            <button onclick="exportarVentas()" class="success" style="padding: 0.5rem 1rem;">
+                <i class="ri-download-line"></i> Exportar
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-ventas" style="display: none; text-align: center; padding: 2rem;">
+        <div class="loading" style="margin: 0 auto;"></div>
+        <p style="margin-top: 1rem; color: #4a5568;">Cargando ventas...</p>
+    </div>
+
+    <!-- Tabla de Ventas -->
+    <table id="tabla-ventas">
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Paciente</th>
+                <th>Items</th>
+                <th>Método Pago</th>
+                <th>Moneda</th>
+                <th>Total</th>
+                <th>Estatus</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="ventas-body">
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 2rem;">
+                    <i class="ri-search-line" style="font-size: 2rem; color: #cbd5e0; margin-bottom: 1rem; display: block;"></i>
+                    <p style="color: #718096;">Use los filtros para buscar ventas</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <!-- Paginación -->
+    <div id="paginacion-ventas" style="display: none; margin-top: 1.5rem; text-align: center;">
+        <button onclick="cambiarPagina(-1)" id="btn-pagina-anterior" class="secondary" disabled>
+            <i class="ri-arrow-left-line"></i> Anterior
+        </button>
+        <span id="info-pagina" style="margin: 0 1rem; color: #4a5568;">Página 1 de 1</span>
+        <button onclick="cambiarPagina(1)" id="btn-pagina-siguiente" class="secondary" disabled>
+            Siguiente <i class="ri-arrow-right-line"></i>
+        </button>
+    </div>
+</div>
 
             <!-- Corte de Caja -->
             <div id="corte-caja" class="view">
@@ -1441,1336 +1599,1737 @@
     </div>
 
     <script>
-    // Configuración de la API
-    const API_BASE_URL = 'https://tu-backend.railway.app/api';
+// Configuración de la API
+const API_BASE_URL = 'https://dental-clinic-app-production.up.railway.app/api';
 
-    // Verificar autenticación al cargar
-    function checkAuth() {
-        const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-        
-        if (!token || !user) {
-            window.location.href = 'login.html';
-            return false;
+// Verificar autenticación al cargar
+function checkAuth() {
+    const token = localStorage.getItem('token');
+    const user = localStorage.getItem('user');
+    
+    if (!token || !user) {
+        window.location.href = 'login.html';
+        return false;
+    }
+    
+    try {
+        const userData = JSON.parse(user);
+        const userInfoElement = document.getElementById('userInfo');
+        if (userInfoElement) {
+            userInfoElement.innerHTML = `
+                <div class="menu-icon"><i class="ri-user-fill"></i></div>
+                <div class="menu-title">${userData.nombre} (${userData.rol})</div>
+            `;
         }
-        
-        try {
-            const userData = JSON.parse(user);
-            const userInfoElement = document.getElementById('userInfo');
-            if (userInfoElement) {
-                userInfoElement.innerHTML = `
-                    <div class="menu-icon"><i class="ri-user-fill"></i></div>
-                    <div class="menu-title">${userData.nombre} (${userData.rol})</div>
-                `;
-            }
-            return true;
-        } catch (error) {
-            console.error('Error parsing user data:', error);
-            window.location.href = 'login.html';
-            return false;
-        }
+        return true;
+    } catch (error) {
+        console.error('Error parsing user data:', error);
+        window.location.href = 'login.html';
+        return false;
+    }
+}
+
+// Función de logout
+function logout() {
+    if (confirm('¿Está seguro de que desea cerrar sesión?')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    }
+}
+
+// Función para hacer requests autenticados
+async function apiCall(endpoint, options = {}) {
+    // Verificar autenticación primero
+    if (!checkAuth()) {
+        throw new Error('No autenticado');
     }
 
-    // Función de logout
-    function logout() {
-        if (confirm('¿Está seguro de que desea cerrar sesión?')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'login.html';
+    const token = localStorage.getItem('token');
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                ...options.headers
+            },
+            ...options
+        });
+
+        if (response.status === 401) {
+            // Token expirado o inválido
+            logout();
+            throw new Error('Sesión expirada');
         }
-    }
 
-    // Función para hacer requests autenticados
-    async function apiCall(endpoint, options = {}) {
-        // Verificar autenticación primero
-        if (!checkAuth()) {
-            throw new Error('No autenticado');
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
 
-        const token = localStorage.getItem('token');
-        
-        try {
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                    ...options.headers
-                },
-                ...options
-            });
-
-            if (response.status === 401) {
-                // Token expirado o inválido
-                logout();
-                throw new Error('Sesión expirada');
-            }
-
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            updateConnectionStatus(true);
-            return data;
-        } catch (error) {
-            console.error('Error en API call:', error);
-            updateConnectionStatus(false);
-            throw error;
-        }
+        const data = await response.json();
+        updateConnectionStatus(true);
+        return data;
+    } catch (error) {
+        console.error('Error en API call:', error);
+        updateConnectionStatus(false);
+        throw error;
     }
+}
 
-    // Variables globales
-    let itemsVenta = [];
-    let pacientes = [];
-    let dentistas = [];
-    let servicios = [];
-    let productos = [];
-    let citasPendientes = [];
-    let citaSeleccionada = null;
-    let aplicarIVA = true; // Por defecto sí aplica IVA
+// Variables globales
+let itemsVenta = [];
+let pacientes = [];
+let dentistas = [];
+let servicios = [];
+let productos = [];
+let citasPendientes = [];
+let citaSeleccionada = null;
+let aplicarIVA = true; // Por defecto sí aplica IVA
 
-    // ==================== FUNCIONES DE UTILIDAD ====================
-    function formatCurrency(amount) {
-        return new Intl.NumberFormat('es-MX', {
-            style: 'currency',
-            currency: 'MXN'
-        }).format(amount);
+// Variables para paginación
+let ventasFiltradas = [];
+let paginaActual = 1;
+const ventasPorPagina = 10;
+
+
+// Función para obtener la fecha actual en formato YYYY-MM-DD (local)
+function getFechaLocal() {
+    const ahora = new Date();
+    const año = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getDate()).padStart(2, '0');
+    return `${año}-${mes}-${dia}`;
+}
+
+// Función para obtener fecha y hora actual en formato local para BD
+function getFechaHoraLocal() {
+    const ahora = new Date();
+    const año = ahora.getFullYear();
+    const mes = String(ahora.getMonth() + 1).padStart(2, '0');
+    const dia = String(ahora.getDate()).padStart(2, '0');
+    const horas = String(ahora.getHours()).padStart(2, '0');
+    const minutos = String(ahora.getMinutes()).padStart(2, '0');
+    const segundos = String(ahora.getSeconds()).padStart(2, '0');
+    return `${año}-${mes}-${dia}T${horas}:${minutos}:${segundos}`;
+}
+
+// ==================== FUNCIONES DE UTILIDAD ====================
+function formatCurrency(amount, currency = 'MXN') {
+    const options = {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 2
+    };
+    
+    return new Intl.NumberFormat('es-MX', options).format(amount);
+}
+
+function showMessage(elementId, message, type) {
+    const element = document.getElementById(elementId);
+    element.innerHTML = `<div class="message ${type}">${message}</div>`;
+    setTimeout(() => element.innerHTML = '', 5000);
+}
+
+function showLoading(elementId, show) {
+    const element = document.getElementById(elementId);
+    element.style.display = show ? 'block' : 'none';
+}
+
+function setButtonLoading(buttonId, loading) {
+    const button = document.getElementById(buttonId);
+    if (loading) {
+        button.innerHTML = '<div class="loading"></div> Procesando...';
+        button.disabled = true;
+    } else {
+        // Restaurar el texto original según el botón
+        const buttonConfig = {
+            'btn-guardar-cita': '<i class="ri-save-fill"></i> Guardar Cita',
+            'btn-guardar-paciente': '<i class="ri-save-fill"></i> Guardar Paciente',
+            'btn-guardar-dentista': '<i class="ri-save-fill"></i> Guardar Dentista',
+            'btn-guardar-servicio': '<i class="ri-save-fill"></i> Guardar Servicio',
+            'btn-guardar-producto': '<i class="ri-save-fill"></i> Guardar Producto',
+            'btn-cargar-citas': '<i class="ri-refresh-line"></i> Refrescar',
+            'btn-guardar-venta': '<i class="ri-money-dollar-circle-fill"></i> Procesar Venta',
+            'btn-cargar-ventas': '<i class="ri-refresh-line"></i> Cargar Ventas',
+            'btn-generar-corte': '<i class="ri-calculator-fill"></i> Generar Corte',
+            'btn-calcular-nomina': '<i class="ri-calculator-fill"></i> Calcular Nómina'
+        };
+        button.innerHTML = buttonConfig[buttonId] || button.innerHTML;
+        button.disabled = false;
     }
+}
 
-    function showMessage(elementId, message, type) {
-        const element = document.getElementById(elementId);
-        element.innerHTML = `<div class="message ${type}">${message}</div>`;
-        setTimeout(() => element.innerHTML = '', 5000);
+// ==================== MANEJO DE CONEXIÓN ====================
+function updateConnectionStatus(connected) {
+    const statusElement = document.getElementById('connection-status');
+    if (connected) {
+        statusElement.className = 'connection-status connected';
+        statusElement.innerHTML = '<i class="ri-wifi-line"></i><span>Conectado</span>';
+    } else {
+        statusElement.className = 'connection-status disconnected';
+        statusElement.innerHTML = '<i class="ri-wifi-off-line"></i><span>Desconectado</span>';
     }
+}
 
-    function showLoading(elementId, show) {
-        const element = document.getElementById(elementId);
-        element.style.display = show ? 'block' : 'none';
+// ==================== FUNCIONES DE NAVEGACIÓN ====================
+function showView(viewId) {
+    // Ocultar todas las vistas
+    const views = document.querySelectorAll('.view');
+    views.forEach(view => view.classList.remove('active'));
+    
+    // Mostrar la vista seleccionada
+    const selectedView = document.getElementById(viewId);
+    if (selectedView) {
+        selectedView.classList.add('active');
     }
-
-    function setButtonLoading(buttonId, loading) {
-        const button = document.getElementById(buttonId);
-        if (loading) {
-            button.innerHTML = '<div class="loading"></div> Procesando...';
-            button.disabled = true;
-        } else {
-            // Restaurar el texto original según el botón
-            const buttonConfig = {
-                'btn-guardar-cita': '<i class="ri-save-fill"></i> Guardar Cita',
-                'btn-guardar-paciente': '<i class="ri-save-fill"></i> Guardar Paciente',
-                'btn-guardar-dentista': '<i class="ri-save-fill"></i> Guardar Dentista',
-                'btn-guardar-servicio': '<i class="ri-save-fill"></i> Guardar Servicio',
-                'btn-guardar-producto': '<i class="ri-save-fill"></i> Guardar Producto',
-                'btn-cargar-citas': '<i class="ri-refresh-line"></i> Refrescar',
-                'btn-guardar-venta': '<i class="ri-money-dollar-circle-fill"></i> Procesar Venta',
-                'btn-cargar-ventas': '<i class="ri-refresh-line"></i> Cargar Ventas',
-                'btn-generar-corte': '<i class="ri-calculator-fill"></i> Generar Corte',
-                'btn-calcular-nomina': '<i class="ri-calculator-fill"></i> Calcular Nómina'
-            };
-            button.innerHTML = buttonConfig[buttonId] || button.innerHTML;
-            button.disabled = false;
-        }
+    
+    // Actualizar el menú activo
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => item.classList.remove('active'));
+    
+    const activeMenuItem = document.querySelector(`.menu-item a[onclick="showView('${viewId}')"]`).parentElement;
+    if (activeMenuItem) {
+        activeMenuItem.classList.add('active');
     }
-
-    // ==================== MANEJO DE CONEXIÓN ====================
-    function updateConnectionStatus(connected) {
-        const statusElement = document.getElementById('connection-status');
-        if (connected) {
-            statusElement.className = 'connection-status connected';
-            statusElement.innerHTML = '<i class="ri-wifi-line"></i><span>Conectado</span>';
-        } else {
-            statusElement.className = 'connection-status disconnected';
-            statusElement.innerHTML = '<i class="ri-wifi-off-line"></i><span>Desconectado</span>';
-        }
-    }
-
-    // ==================== FUNCIONES DE NAVEGACIÓN ====================
-    function showView(viewId) {
-        // Ocultar todas las vistas
-        const views = document.querySelectorAll('.view');
-        views.forEach(view => view.classList.remove('active'));
-        
-        // Mostrar la vista seleccionada
-        const selectedView = document.getElementById(viewId);
-        if (selectedView) {
-            selectedView.classList.add('active');
-        }
-        
-        // Actualizar el menú activo
-        const menuItems = document.querySelectorAll('.menu-item');
-        menuItems.forEach(item => item.classList.remove('active'));
-        
-        const activeMenuItem = document.querySelector(`.menu-item a[onclick="showView('${viewId}')"]`).parentElement;
-        if (activeMenuItem) {
-            activeMenuItem.classList.add('active');
-        }
-        
-        // Cargar datos específicos según la vista
-        switch(viewId) {
-            case 'ver-citas':
-                cargarCitas();
-                break;
-            case 'pacientes':
-                cargarPacientes();
-                break;
-            case 'dentistas':
-                cargarDentistas();
-                break;
-            case 'servicios':
-                cargarServicios();
-                break;
-            case 'productos':
-                cargarProductos();
-                break;
-            case 'ventas':
-                cargarVentas();
-                break;
-            case 'nomina':
-                // Configurar fechas por defecto para nómina
-                const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
-                const lastDay = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
-                document.getElementById('fecha-inicio-nomina').value = firstDay;
-                document.getElementById('fecha-fin-nomina').value = lastDay;
-                break;
-            case 'nueva-cita':
-                cargarSelectoresCita();
-                break;
-            case 'nueva-venta':
-                cargarSelectoresVenta();
-                break;
-            case 'corte-caja':
-                // Configurar fecha por defecto
-                const hoy = new Date().toISOString().split('T')[0];
-                document.getElementById('fecha-corte').value = hoy;
-                break;
-        }
-    }
-
-    // ==================== GESTIÓN DE CITAS ====================
-    async function cargarSelectoresCita() {
-        try {
-            const [pacientesData, dentistasData, serviciosData] = await Promise.all([
-                apiCall('/pacientes'),
-                apiCall('/dentistas'),
-                apiCall('/servicios')
-            ]);
-
-            const selectPaciente = document.getElementById('paciente-id');
-            const selectDentista = document.getElementById('dentista-id');
-            const selectServicio = document.getElementById('servicio-id');
-
-            selectPaciente.innerHTML = '<option value="">Seleccionar paciente</option>' +
-                pacientesData.filter(p => p.estatus === 'Activo')
-                .map(p => `<option value="${p._id}">${p.nombre}</option>`)
-                .join('');
-
-            selectDentista.innerHTML = '<option value="">Seleccionar dentista</option>' +
-                dentistasData.filter(d => d.estado === 'Activo')
-                .map(d => `<option value="${d._id}">${d.nombre}</option>`)
-                .join('');
-
-            selectServicio.innerHTML = '<option value="">Seleccionar servicio</option>' +
-                serviciosData.filter(s => s.estatus === 'Activo')
-                .map(s => `<option value="${s._id}">${s.nombre} - ${formatCurrency(s.precio)}</option>`)
-                .join('');
-
-        } catch (error) {
-            showMessage('mensaje-cita', 'Error al cargar los datos: ' + error.message, 'error');
-        }
-    }
-
-    async function cargarCitas() {
-        showLoading('loading-citas', true);
-        setButtonLoading('btn-cargar-citas', true);
-
-        try {
-            const citas = await apiCall('/citas');
-            const tbody = document.getElementById('citas-body');
-            
-            if (citas.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay citas programadas</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = citas.map(cita => `
-                <tr>
-                    <td>${cita.paciente_id?.nombre || 'N/A'}</td>
-                    <td>${cita.descripcion}</td>
-                    <td>${new Date(cita.fecha_hora).toLocaleString()}</td>
-                    <td>${cita.duracion} min</td>
-                    <td>${cita.dentista_id?.nombre || 'N/A'}</td>
-                    <td>${cita.estatus}</td>
-                    <td>
-                        <button onclick="cancelarCita('${cita._id}')" class="danger">Cancelar</button>
-                    </td>
-                </tr>
-            `).join('');
-
-        } catch (error) {
-            showMessage('mensaje-cita', 'Error al cargar citas: ' + error.message, 'error');
-            document.getElementById('citas-body').innerHTML = 
-                '<tr><td colspan="7" style="text-align: center; color: red;">Error al cargar citas</td></tr>';
-        } finally {
-            showLoading('loading-citas', false);
-            setButtonLoading('btn-cargar-citas', false);
-        }
-    }
-
-    // Form handler para citas
-    document.getElementById('form-nueva-cita').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        setButtonLoading('btn-guardar-cita', true);
-
-        try {
-            const formData = new FormData(e.target);
-            const citaData = {
-                paciente_id: formData.get('paciente_id'),
-                descripcion: formData.get('descripcion'),
-                fecha_hora: formData.get('fecha_hora'),
-                duracion: parseInt(formData.get('duracion')),
-                dentista_id: formData.get('dentista_id'),
-                servicio_id: formData.get('servicio_id'),
-                estatus: 'Programada'
-            };
-
-            await apiCall('/citas', {
-                method: 'POST',
-                body: JSON.stringify(citaData)
-            });
-
-            showMessage('mensaje-cita', 'Cita creada exitosamente', 'success');
-            e.target.reset();
+    
+    // Cargar datos específicos según la vista
+    switch(viewId) {
+        case 'ver-citas':
             cargarCitas();
-
-        } catch (error) {
-            showMessage('mensaje-cita', 'Error al crear cita: ' + error.message, 'error');
-        } finally {
-            setButtonLoading('btn-guardar-cita', false);
-        }
-    });
-
-    // ==================== GESTIÓN DE PACIENTES ====================
-    async function cargarPacientes() {
-        showLoading('loading-pacientes', true);
-        setButtonLoading('btn-cargar-pacientes', true);
-
-        try {
-            const pacientesData = await apiCall('/pacientes');
-            const tbody = document.getElementById('pacientes-body');
-            
-            if (pacientesData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay pacientes registrados</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = pacientesData.map(paciente => `
-                <tr>
-                    <td>${paciente.nombre}</td>
-                    <td>${paciente.telefono || 'N/A'}</td>
-                    <td>${paciente.email || 'N/A'}</td>
-                    <td>${paciente.estatus}</td>
-                    <td>
-                        <button onclick="editarPaciente('${paciente._id}')" class="secondary">Editar</button>
-                        <button onclick="eliminarPaciente('${paciente._id}')" class="danger">Eliminar</button>
-                    </td>
-                </tr>
-            `).join('');
-
-        } catch (error) {
-            showMessage('mensaje-paciente', 'Error al cargar pacientes: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-pacientes', false);
-            setButtonLoading('btn-cargar-pacientes', false);
-        }
-    }
-
-    // Form handler para pacientes
-    document.getElementById('form-paciente').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        setButtonLoading('btn-guardar-paciente', true);
-
-        try {
-            const formData = new FormData(e.target);
-            const pacienteData = {
-                nombre: formData.get('nombre'),
-                telefono: formData.get('telefono'),
-                email: formData.get('email'),
-                estatus: formData.get('estatus')
-            };
-
-            await apiCall('/pacientes', {
-                method: 'POST',
-                body: JSON.stringify(pacienteData)
-            });
-
-            showMessage('mensaje-paciente', 'Paciente guardado exitosamente', 'success');
-            e.target.reset();
+            break;
+        case 'pacientes':
             cargarPacientes();
-
-        } catch (error) {
-            showMessage('mensaje-paciente', 'Error al guardar paciente: ' + error.message, 'error');
-        } finally {
-            setButtonLoading('btn-guardar-paciente', false);
-        }
-    });
-
-    // ==================== GESTIÓN DE DENTISTAS ====================
-    async function cargarDentistas() {
-        showLoading('loading-dentistas', true);
-        setButtonLoading('btn-cargar-dentistas', true);
-
-        try {
-            const dentistasData = await apiCall('/dentistas');
-            const tbody = document.getElementById('dentistas-body');
-            
-            if (dentistasData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay dentistas registrados</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = dentistasData.map(dentista => `
-                <tr>
-                    <td>${dentista.nombre}</td>
-                    <td>${dentista.estado}</td>
-                    <td>${dentista.comision}%</td>
-                    <td>
-                        <button onclick="editarDentista('${dentista._id}')" class="secondary">Editar</button>
-                        <button onclick="eliminarDentista('${dentista._id}')" class="danger">Eliminar</button>
-                    </td>
-                </tr>
-            `).join('');
-
-        } catch (error) {
-            showMessage('mensaje-dentista', 'Error al cargar dentistas: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-dentistas', false);
-            setButtonLoading('btn-cargar-dentistas', false);
-        }
-    }
-
-    // Form handler para dentistas
-    document.getElementById('form-dentista').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        setButtonLoading('btn-guardar-dentista', true);
-
-        try {
-            const formData = new FormData(e.target);
-            const dentistaData = {
-                nombre: formData.get('nombre'),
-                estado: formData.get('estado'),
-                comision: parseFloat(formData.get('comision'))
-            };
-
-            await apiCall('/dentistas', {
-                method: 'POST',
-                body: JSON.stringify(dentistaData)
-            });
-
-            showMessage('mensaje-dentista', 'Dentista guardado exitosamente', 'success');
-            e.target.reset();
+            break;
+        case 'dentistas':
             cargarDentistas();
-
-        } catch (error) {
-            showMessage('mensaje-dentista', 'Error al guardar dentista: ' + error.message, 'error');
-        } finally {
-            setButtonLoading('btn-guardar-dentista', false);
-        }
-    });
-
-    // ==================== GESTIÓN DE SERVICIOS ====================
-    async function cargarServicios() {
-        showLoading('loading-servicios', true);
-        setButtonLoading('btn-cargar-servicios', true);
-
-        try {
-            const serviciosData = await apiCall('/servicios');
-            const tbody = document.getElementById('servicios-body');
-            
-            if (serviciosData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay servicios registrados</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = serviciosData.map(servicio => `
-                <tr>
-                    <td>${servicio.nombre}</td>
-                    <td>${servicio.descripcion || 'N/A'}</td>
-                    <td>${formatCurrency(servicio.precio)}</td>
-                    <td>${servicio.estatus}</td>
-                    <td>
-                        <button onclick="editarServicio('${servicio._id}')" class="secondary">Editar</button>
-                        <button onclick="eliminarServicio('${servicio._id}')" class="danger">Eliminar</button>
-                    </td>
-                </tr>
-            `).join('');
-
-        } catch (error) {
-            showMessage('mensaje-servicio', 'Error al cargar servicios: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-servicios', false);
-            setButtonLoading('btn-cargar-servicios', false);
-        }
-    }
-
-    // Form handler para servicios
-    document.getElementById('form-servicio').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        setButtonLoading('btn-guardar-servicio', true);
-
-        try {
-            const formData = new FormData(e.target);
-            const servicioData = {
-                nombre: formData.get('nombre'),
-                descripcion: formData.get('descripcion'),
-                precio: parseFloat(formData.get('precio')),
-                estatus: formData.get('estatus')
-            };
-
-            await apiCall('/servicios', {
-                method: 'POST',
-                body: JSON.stringify(servicioData)
-            });
-
-            showMessage('mensaje-servicio', 'Servicio guardado exitosamente', 'success');
-            e.target.reset();
+            break;
+        case 'servicios':
             cargarServicios();
-
-        } catch (error) {
-            showMessage('mensaje-servicio', 'Error al guardar servicio: ' + error.message, 'error');
-        } finally {
-            setButtonLoading('btn-guardar-servicio', false);
-        }
-    });
-
-    // ==================== GESTIÓN DE PRODUCTOS ====================
-    async function cargarProductos() {
-        showLoading('loading-productos', true);
-        setButtonLoading('btn-cargar-productos', true);
-
-        try {
-            const productosData = await apiCall('/productos');
-            const tbody = document.getElementById('productos-body');
-            
-            if (productosData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay productos registrados</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = productosData.map(producto => `
-                <tr>
-                    <td>${producto.nombre}</td>
-                    <td>${producto.descripcion || 'N/A'}</td>
-                    <td>${producto.marca || 'N/A'}</td>
-                    <td>${producto.cantidad}</td>
-                    <td>${formatCurrency(producto.precio_compra)}</td>
-                    <td>${formatCurrency(producto.precio_venta)}</td>
-                    <td>
-                        <button onclick="editarProducto('${producto._id}')" class="secondary">Editar</button>
-                        <button onclick="eliminarProducto('${producto._id}')" class="danger">Eliminar</button>
-                    </td>
-                </tr>
-            `).join('');
-
-        } catch (error) {
-            showMessage('mensaje-producto', 'Error al cargar productos: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-productos', false);
-            setButtonLoading('btn-cargar-productos', false);
-        }
-    }
-
-    // Form handler para productos
-    document.getElementById('form-producto').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        setButtonLoading('btn-guardar-producto', true);
-
-        try {
-            const formData = new FormData(e.target);
-            const productoData = {
-                nombre: formData.get('nombre'),
-                descripcion: formData.get('descripcion'),
-                marca: formData.get('marca'),
-                cantidad: parseInt(formData.get('cantidad')),
-                precio_compra: parseFloat(formData.get('precio_compra')),
-                precio_venta: parseFloat(formData.get('precio_venta'))
-            };
-
-            await apiCall('/productos', {
-                method: 'POST',
-                body: JSON.stringify(productoData)
-            });
-
-            showMessage('mensaje-producto', 'Producto guardado exitosamente', 'success');
-            e.target.reset();
+            break;
+        case 'productos':
             cargarProductos();
-
-        } catch (error) {
-            showMessage('mensaje-producto', 'Error al guardar producto: ' + error.message, 'error');
-        } finally {
-            setButtonLoading('btn-guardar-producto', false);
-        }
-    });
-
-    // ==================== GESTIÓN DE VENTAS MEJORADA ====================
-
-    // Cargar citas pendientes para selección
-    async function cargarCitasPendientes() {
-        try {
-            const citas = await apiCall('/citas');
-            const citasFiltradas = citas.filter(cita => 
-                cita.estatus === 'Programada' || cita.estatus === 'En Proceso'
-            );
-            
-            citasPendientes = citasFiltradas;
-            const selectCita = document.getElementById('select-cita-pendiente');
-            
-            selectCita.innerHTML = '<option value="">Seleccionar cita pendiente...</option>' +
-                citasFiltradas.map(cita => `
-                    <option value="${cita._id}">
-                        ${cita.paciente_id?.nombre || 'Paciente'} - ${cita.dentista_id?.nombre || 'Dentista'} - 
-                        ${new Date(cita.fecha_hora).toLocaleDateString()} - ${cita.servicio_id?.nombre || 'Servicio'}
-                    </option>
-                `).join('');
-                
-            showMessage('mensaje-venta', `Se encontraron ${citasFiltradas.length} citas pendientes`, 'success');
-            
-        } catch (error) {
-            showMessage('mensaje-venta', 'Error al cargar citas pendientes: ' + error.message, 'error');
-        }
+            break;
+        case 'ventas':
+            cargarVentas();
+            break;
+        case 'nomina':
+            // Configurar fechas por defecto para nómina
+            const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+            const lastDay = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString().split('T')[0];
+            document.getElementById('fecha-inicio-nomina').value = firstDay;
+            document.getElementById('fecha-fin-nomina').value = lastDay;
+            break;
+        case 'nueva-cita':
+            cargarSelectoresCita();
+            break;
+        case 'nueva-venta':
+            cargarSelectoresVenta();
+            break;
+        case 'corte-caja':
+            // Configurar fecha por defecto
+            const hoy = new Date().toISOString().split('T')[0];
+            document.getElementById('fecha-corte').value = hoy;
+            break;
     }
+}
 
-    // Cargar datos de la cita seleccionada
-    function cargarDatosCita() {
-        const citaId = document.getElementById('select-cita-pendiente').value;
+// ==================== GESTIÓN DE CITAS ====================
+async function cargarSelectoresCita() {
+    try {
+        const [pacientesData, dentistasData, serviciosData] = await Promise.all([
+            apiCall('/pacientes'),
+            apiCall('/dentistas'),
+            apiCall('/servicios')
+        ]);
+
+        const selectPaciente = document.getElementById('paciente-id');
+        const selectDentista = document.getElementById('dentista-id');
+        const selectServicio = document.getElementById('servicio-id');
+
+        selectPaciente.innerHTML = '<option value="">Seleccionar paciente</option>' +
+            pacientesData.filter(p => p.estatus === 'Activo')
+            .map(p => `<option value="${p._id}">${p.nombre}</option>`)
+            .join('');
+
+        selectDentista.innerHTML = '<option value="">Seleccionar dentista</option>' +
+            dentistasData.filter(d => d.estado === 'Activo')
+            .map(d => `<option value="${d._id}">${d.nombre}</option>`)
+            .join('');
+
+        selectServicio.innerHTML = '<option value="">Seleccionar servicio</option>' +
+            serviciosData.filter(s => s.estatus === 'Activo')
+            .map(s => `<option value="${s._id}">${s.nombre} - ${formatCurrency(s.precio)}</option>`)
+            .join('');
+
+    } catch (error) {
+        showMessage('mensaje-cita', 'Error al cargar los datos: ' + error.message, 'error');
+    }
+}
+
+async function cargarCitas() {
+    showLoading('loading-citas', true);
+    setButtonLoading('btn-cargar-citas', true);
+
+    try {
+        const citas = await apiCall('/citas');
+        const tbody = document.getElementById('citas-body');
         
-        if (!citaId) {
-            limpiarSeleccionCita();
+        if (citas.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay citas programadas</td></tr>';
             return;
         }
-        
-        citaSeleccionada = citasPendientes.find(cita => cita._id === citaId);
-        
-        if (citaSeleccionada) {
-            // Mostrar información de la cita
-            document.getElementById('cita-paciente').textContent = citaSeleccionada.paciente_id?.nombre || 'N/A';
-            document.getElementById('cita-dentista').textContent = citaSeleccionada.dentista_id?.nombre || 'N/A';
-            document.getElementById('cita-servicio').textContent = citaSeleccionada.servicio_id?.nombre || 'N/A';
-            document.getElementById('cita-fecha').textContent = new Date(citaSeleccionada.fecha_hora).toLocaleString();
-            document.getElementById('cita-descripcion').textContent = citaSeleccionada.descripcion || 'Sin descripción';
-            
-            document.getElementById('info-cita-seleccionada').style.display = 'block';
-            
-            // Llenar automáticamente el paciente en el formulario
-            document.getElementById('venta-paciente-id').value = citaSeleccionada.paciente_id?._id || '';
-            
-            // Agregar automáticamente el servicio principal de la cita
-            agregarServicioDeCita();
-            
-            showMessage('mensaje-venta', 'Cita cargada exitosamente. Servicio principal agregado automáticamente.', 'success');
-        }
-    }
 
-    // Agregar el servicio principal de la cita a la venta
-    function agregarServicioDeCita() {
-        if (!citaSeleccionada || !citaSeleccionada.servicio_id) return;
-        
-        const servicio = citaSeleccionada.servicio_id;
-        const dentista = citaSeleccionada.dentista_id;
-        
-        const item = {
-            tipo: 'servicio',
-            item_id: servicio._id,
-            dentista_id: dentista?._id,
-            descripcion: `${servicio.nombre} - ${dentista?.nombre || 'Dentista asignado'}`,
-            cantidad: 1,
-            precio: servicio.precio,
-            subtotal: servicio.precio,
-            esServicioPrincipal: true
-        };
-        
-        // Verificar si el servicio principal ya está agregado
-        const servicioYaAgregado = itemsVenta.some(item => 
-            item.esServicioPrincipal && item.item_id === servicio._id
-        );
-        
-        if (!servicioYaAgregado) {
-            itemsVenta.push(item);
-            actualizarTablaVenta();
-            calcularTotalVenta();
-        }
-    }
-
-    // Limpiar selección de cita
-    function limpiarSeleccionCita() {
-        citaSeleccionada = null;
-        document.getElementById('select-cita-pendiente').value = '';
-        document.getElementById('info-cita-seleccionada').style.display = 'none';
-        document.getElementById('venta-paciente-id').value = '';
-        
-        // Remover solo el servicio principal si existe
-        itemsVenta = itemsVenta.filter(item => !item.esServicioPrincipal);
-        actualizarTablaVenta();
-        calcularTotalVenta();
-    }
-
-    // Cargar selectores para venta
-    async function cargarSelectoresVenta() {
-        try {
-            const [pacientesData, dentistasData, serviciosData, productosData] = await Promise.all([
-                apiCall('/pacientes'),
-                apiCall('/dentistas'),
-                apiCall('/servicios'),
-                apiCall('/productos')
-            ]);
-
-            // Selector de pacientes
-            const selectPaciente = document.getElementById('venta-paciente-id');
-            selectPaciente.innerHTML = '<option value="">Seleccionar paciente...</option>' +
-                pacientesData.filter(p => p.estatus === 'Activo')
-                .map(p => `<option value="${p._id}">${p.nombre}</option>`)
-                .join('');
-
-            // Selector de servicios adicionales
-            const selectServicioAdicional = document.getElementById('venta-servicio-adicional');
-            selectServicioAdicional.innerHTML = '<option value="">Seleccionar servicio adicional...</option>' +
-                serviciosData.filter(s => s.estatus === 'Activo')
-                .map(s => `<option value="${s._id}" data-precio="${s.precio}">${s.nombre} - ${formatCurrency(s.precio)}</option>`)
-                .join('');
-
-            // Selector de dentistas adicionales
-            const selectDentistaAdicional = document.getElementById('venta-dentista-adicional');
-            selectDentistaAdicional.innerHTML = '<option value="">Seleccionar dentista...</option>' +
-                dentistasData.filter(d => d.estado === 'Activo')
-                .map(d => `<option value="${d._id}">${d.nombre}</option>`)
-                .join('');
-
-            // Selector de productos
-            const selectProducto = document.getElementById('venta-producto-id');
-            selectProducto.innerHTML = '<option value="">Seleccionar producto...</option>' +
-                productosData.filter(p => p.cantidad > 0)
-                .map(p => `<option value="${p._id}" data-precio="${p.precio_venta}" data-stock="${p.cantidad}">${p.nombre} - ${formatCurrency(p.precio_venta)} (Stock: ${p.cantidad})</option>`)
-                .join('');
-
-            // Cargar citas pendientes automáticamente
-            await cargarCitasPendientes();
-
-        } catch (error) {
-            showMessage('mensaje-venta', 'Error al cargar los datos: ' + error.message, 'error');
-        }
-    }
-
-    // Agregar servicio adicional
-    function agregarServicioAdicional() {
-        const selectServicio = document.getElementById('venta-servicio-adicional');
-        const selectDentista = document.getElementById('venta-dentista-adicional');
-        
-        if (!selectServicio.value) {
-            showMessage('mensaje-venta', 'Debe seleccionar un servicio', 'error');
-            return;
-        }
-        
-        const servicioOption = selectServicio.selectedOptions[0];
-        const dentistaTexto = selectDentista.value ? 
-            selectDentista.options[selectDentista.selectedIndex].text : 'Sin dentista específico';
-        const precio = parseFloat(servicioOption.dataset.precio);
-        const servicioTexto = servicioOption.text.split(' - ')[0];
-        
-        const item = {
-            tipo: 'servicio',
-            item_id: selectServicio.value,
-            dentista_id: selectDentista.value || null,
-            descripcion: `${servicioTexto} - ${dentistaTexto}`,
-            cantidad: 1,
-            precio: precio,
-            subtotal: precio,
-            esServicioPrincipal: false
-        };
-        
-        itemsVenta.push(item);
-        actualizarTablaVenta();
-        calcularTotalVenta();
-        
-        // Limpiar selectores
-        selectServicio.value = '';
-        selectDentista.value = '';
-    }
-
-    // Agregar producto
-    function agregarProductoVenta() {
-        const selectProducto = document.getElementById('venta-producto-id');
-        const cantidad = parseInt(document.getElementById('venta-cantidad').value);
-        
-        if (!selectProducto.value || cantidad < 1) {
-            showMessage('mensaje-venta', 'Debe seleccionar un producto y una cantidad válida', 'error');
-            return;
-        }
-        
-        const productoOption = selectProducto.selectedOptions[0];
-        const precio = parseFloat(productoOption.dataset.precio);
-        const stock = parseInt(productoOption.dataset.stock);
-        const productotexto = productoOption.text.split(' - ')[0];
-        
-        if (cantidad > stock) {
-            showMessage('mensaje-venta', `Stock insuficiente. Disponible: ${stock}`, 'error');
-            return;
-        }
-        
-        const item = {
-            tipo: 'producto',
-            item_id: selectProducto.value,
-            descripcion: productotexto,
-            cantidad: cantidad,
-            precio: precio,
-            subtotal: precio * cantidad
-        };
-        
-        itemsVenta.push(item);
-        actualizarTablaVenta();
-        calcularTotalVenta();
-        
-        // Limpiar selector
-        selectProducto.value = '';
-        document.getElementById('venta-cantidad').value = 1;
-    }
-
-    // Actualizar tabla de venta
-    function actualizarTablaVenta() {
-        const tbody = document.getElementById('items-venta-body');
-        
-        if (itemsVenta.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay items agregados</td></tr>';
-            return;
-        }
-        
-        tbody.innerHTML = itemsVenta.map((item, index) => `
+        tbody.innerHTML = citas.map(cita => `
             <tr>
+                <td>${cita.paciente_id?.nombre || 'N/A'}</td>
+                <td>${cita.descripcion}</td>
+                <td>${new Date(cita.fecha_hora).toLocaleString()}</td>
+                <td>${cita.duracion} min</td>
+                <td>${cita.dentista_id?.nombre || 'N/A'}</td>
+                <td>${cita.estatus}</td>
                 <td>
-                    ${item.tipo}
-                    ${item.esServicioPrincipal ? '<br><small style="color: #27ae60;">(Principal)</small>' : ''}
-                </td>
-                <td>${item.descripcion}</td>
-                <td>${item.cantidad}</td>
-                <td>${formatCurrency(item.precio)}</td>
-                <td>${formatCurrency(item.subtotal)}</td>
-                <td>
-                    ${!item.esServicioPrincipal ? `
-                        <button class="danger" onclick="eliminarItemVenta(${index})">
-                            <i class="ri-delete-bin-fill"></i>
-                        </button>
-                    ` : '<small style="color: #666;">No se puede eliminar</small>'}
+                    <button onclick="cancelarCita('${cita._id}')" class="danger">Cancelar</button>
                 </td>
             </tr>
         `).join('');
-    }
 
-    // Función para alternar IVA
-    function toggleIVA() {
-        aplicarIVA = !aplicarIVA;
-        const ivaToggle = document.getElementById('iva-toggle');
-        const ivaLabel = document.getElementById('iva-label');
+    } catch (error) {
+        showMessage('mensaje-cita', 'Error al cargar citas: ' + error.message, 'error');
+        document.getElementById('citas-body').innerHTML = 
+            '<tr><td colspan="7" style="text-align: center; color: red;">Error al cargar citas</td></tr>';
+    } finally {
+        showLoading('loading-citas', false);
+        setButtonLoading('btn-cargar-citas', false);
+    }
+}
+
+// Form handler para citas
+document.getElementById('form-nueva-cita').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setButtonLoading('btn-guardar-cita', true);
+
+    try {
+        const formData = new FormData(e.target);
+        const citaData = {
+            paciente_id: formData.get('paciente_id'),
+            descripcion: formData.get('descripcion'),
+            fecha_hora: formData.get('fecha_hora'),
+            duracion: parseInt(formData.get('duracion')),
+            dentista_id: formData.get('dentista_id'),
+            servicio_id: formData.get('servicio_id'),
+            estatus: 'Programada'
+        };
+
+        await apiCall('/citas', {
+            method: 'POST',
+            body: JSON.stringify(citaData)
+        });
+
+        showMessage('mensaje-cita', 'Cita creada exitosamente', 'success');
+        e.target.reset();
+        cargarCitas();
+
+    } catch (error) {
+        showMessage('mensaje-cita', 'Error al crear cita: ' + error.message, 'error');
+    } finally {
+        setButtonLoading('btn-guardar-cita', false);
+    }
+});
+
+// ==================== GESTIÓN DE PACIENTES ====================
+async function cargarPacientes() {
+    showLoading('loading-pacientes', true);
+    setButtonLoading('btn-cargar-pacientes', true);
+
+    try {
+        const pacientesData = await apiCall('/pacientes');
+        const tbody = document.getElementById('pacientes-body');
         
-        if (aplicarIVA) {
-            ivaToggle.checked = true;
-            ivaLabel.innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
-            ivaLabel.style.color = '#27ae60';
-        } else {
-            ivaToggle.checked = false;
-            ivaLabel.innerHTML = '<i class="ri-checkbox-blank-line"></i> Sin IVA';
-            ivaLabel.style.color = '#666';
-        }
-        
-        calcularTotalVenta();
-    }
-
-    // Calcular totales y cambio
-    function calcularTotalVenta() {
-        const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
-        const iva = aplicarIVA ? subtotal * 0.16 : 0;
-        const total = subtotal + iva;
-
-        document.getElementById('venta-subtotal').value = formatCurrency(subtotal);
-        document.getElementById('venta-iva').value = formatCurrency(iva);
-        document.getElementById('venta-total').value = formatCurrency(total);
-
-        // Calcular cambio
-        const montoPagado = parseFloat(document.getElementById('venta-monto-pagado').value) || 0;
-        const cambio = Math.max(0, montoPagado - total);
-        document.getElementById('venta-cambio').value = formatCurrency(cambio);
-    }
-
-    // Eliminar item de venta
-    function eliminarItemVenta(index) {
-        if (itemsVenta[index].esServicioPrincipal) {
-            showMessage('mensaje-venta', 'No se puede eliminar el servicio principal de la cita', 'error');
+        if (pacientesData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay pacientes registrados</td></tr>';
             return;
         }
-        itemsVenta.splice(index, 1);
+
+        tbody.innerHTML = pacientesData.map(paciente => `
+            <tr>
+                <td>${paciente.nombre}</td>
+                <td>${paciente.telefono || 'N/A'}</td>
+                <td>${paciente.email || 'N/A'}</td>
+                <td>${paciente.estatus}</td>
+                <td>
+                    <button onclick="editarPaciente('${paciente._id}')" class="secondary">Editar</button>
+                    <button onclick="eliminarPaciente('${paciente._id}')" class="danger">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        showMessage('mensaje-paciente', 'Error al cargar pacientes: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-pacientes', false);
+        setButtonLoading('btn-cargar-pacientes', false);
+    }
+}
+
+// Form handler para pacientes
+document.getElementById('form-paciente').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setButtonLoading('btn-guardar-paciente', true);
+
+    try {
+        const formData = new FormData(e.target);
+        const pacienteData = {
+            nombre: formData.get('nombre'),
+            telefono: formData.get('telefono'),
+            email: formData.get('email'),
+            estatus: formData.get('estatus')
+        };
+
+        await apiCall('/pacientes', {
+            method: 'POST',
+            body: JSON.stringify(pacienteData)
+        });
+
+        showMessage('mensaje-paciente', 'Paciente guardado exitosamente', 'success');
+        e.target.reset();
+        cargarPacientes();
+
+    } catch (error) {
+        showMessage('mensaje-paciente', 'Error al guardar paciente: ' + error.message, 'error');
+    } finally {
+        setButtonLoading('btn-guardar-paciente', false);
+    }
+});
+
+// ==================== GESTIÓN DE DENTISTAS ====================
+async function cargarDentistas() {
+    showLoading('loading-dentistas', true);
+    setButtonLoading('btn-cargar-dentistas', true);
+
+    try {
+        const dentistasData = await apiCall('/dentistas');
+        const tbody = document.getElementById('dentistas-body');
+        
+        if (dentistasData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay dentistas registrados</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = dentistasData.map(dentista => `
+            <tr>
+                <td>${dentista.nombre}</td>
+                <td>${dentista.estado}</td>
+                <td>${dentista.comision}%</td>
+                <td>
+                    <button onclick="editarDentista('${dentista._id}')" class="secondary">Editar</button>
+                    <button onclick="eliminarDentista('${dentista._id}')" class="danger">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        showMessage('mensaje-dentista', 'Error al cargar dentistas: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-dentistas', false);
+        setButtonLoading('btn-cargar-dentistas', false);
+    }
+}
+
+// Form handler para dentistas
+document.getElementById('form-dentista').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setButtonLoading('btn-guardar-dentista', true);
+
+    try {
+        const formData = new FormData(e.target);
+        const dentistaData = {
+            nombre: formData.get('nombre'),
+            estado: formData.get('estado'),
+            comision: parseFloat(formData.get('comision'))
+        };
+
+        await apiCall('/dentistas', {
+            method: 'POST',
+            body: JSON.stringify(dentistaData)
+        });
+
+        showMessage('mensaje-dentista', 'Dentista guardado exitosamente', 'success');
+        e.target.reset();
+        cargarDentistas();
+
+    } catch (error) {
+        showMessage('mensaje-dentista', 'Error al guardar dentista: ' + error.message, 'error');
+    } finally {
+        setButtonLoading('btn-guardar-dentista', false);
+    }
+});
+
+// ==================== GESTIÓN DE SERVICIOS ====================
+async function cargarServicios() {
+    showLoading('loading-servicios', true);
+    setButtonLoading('btn-cargar-servicios', true);
+
+    try {
+        const serviciosData = await apiCall('/servicios');
+        const tbody = document.getElementById('servicios-body');
+        
+        if (serviciosData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay servicios registrados</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = serviciosData.map(servicio => `
+            <tr>
+                <td>${servicio.nombre}</td>
+                <td>${servicio.descripcion || 'N/A'}</td>
+                <td>${formatCurrency(servicio.precio)}</td>
+                <td>${servicio.estatus}</td>
+                <td>
+                    <button onclick="editarServicio('${servicio._id}')" class="secondary">Editar</button>
+                    <button onclick="eliminarServicio('${servicio._id}')" class="danger">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        showMessage('mensaje-servicio', 'Error al cargar servicios: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-servicios', false);
+        setButtonLoading('btn-cargar-servicios', false);
+    }
+}
+
+// Form handler para servicios
+document.getElementById('form-servicio').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setButtonLoading('btn-guardar-servicio', true);
+
+    try {
+        const formData = new FormData(e.target);
+        const servicioData = {
+            nombre: formData.get('nombre'),
+            descripcion: formData.get('descripcion'),
+            precio: parseFloat(formData.get('precio')),
+            estatus: formData.get('estatus')
+        };
+
+        await apiCall('/servicios', {
+            method: 'POST',
+            body: JSON.stringify(servicioData)
+        });
+
+        showMessage('mensaje-servicio', 'Servicio guardado exitosamente', 'success');
+        e.target.reset();
+        cargarServicios();
+
+    } catch (error) {
+        showMessage('mensaje-servicio', 'Error al guardar servicio: ' + error.message, 'error');
+    } finally {
+        setButtonLoading('btn-guardar-servicio', false);
+    }
+});
+
+// ==================== GESTIÓN DE PRODUCTOS ====================
+async function cargarProductos() {
+    showLoading('loading-productos', true);
+    setButtonLoading('btn-cargar-productos', true);
+
+    try {
+        const productosData = await apiCall('/productos');
+        const tbody = document.getElementById('productos-body');
+        
+        if (productosData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay productos registrados</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = productosData.map(producto => `
+            <tr>
+                <td>${producto.nombre}</td>
+                <td>${producto.descripcion || 'N/A'}</td>
+                <td>${producto.marca || 'N/A'}</td>
+                <td>${producto.cantidad}</td>
+                <td>${formatCurrency(producto.precio_compra)}</td>
+                <td>${formatCurrency(producto.precio_venta)}</td>
+                <td>
+                    <button onclick="editarProducto('${producto._id}')" class="secondary">Editar</button>
+                    <button onclick="eliminarProducto('${producto._id}')" class="danger">Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        showMessage('mensaje-producto', 'Error al cargar productos: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-productos', false);
+        setButtonLoading('btn-cargar-productos', false);
+    }
+}
+
+// Form handler para productos
+document.getElementById('form-producto').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    setButtonLoading('btn-guardar-producto', true);
+
+    try {
+        const formData = new FormData(e.target);
+        const productoData = {
+            nombre: formData.get('nombre'),
+            descripcion: formData.get('descripcion'),
+            marca: formData.get('marca'),
+            cantidad: parseInt(formData.get('cantidad')),
+            precio_compra: parseFloat(formData.get('precio_compra')),
+            precio_venta: parseFloat(formData.get('precio_venta'))
+        };
+
+        await apiCall('/productos', {
+            method: 'POST',
+            body: JSON.stringify(productoData)
+        });
+
+        showMessage('mensaje-producto', 'Producto guardado exitosamente', 'success');
+        e.target.reset();
+        cargarProductos();
+
+    } catch (error) {
+        showMessage('mensaje-producto', 'Error al guardar producto: ' + error.message, 'error');
+    } finally {
+        setButtonLoading('btn-guardar-producto', false);
+    }
+});
+
+// ==================== GESTIÓN DE VENTAS MEJORADA ====================
+
+// Cargar citas pendientes para selección
+async function cargarCitasPendientes() {
+    try {
+        const citas = await apiCall('/citas');
+        const citasFiltradas = citas.filter(cita => 
+            cita.estatus === 'Programada' || cita.estatus === 'En Proceso'
+        );
+        
+        citasPendientes = citasFiltradas;
+        const selectCita = document.getElementById('select-cita-pendiente');
+        
+        selectCita.innerHTML = '<option value="">Seleccionar cita pendiente...</option>' +
+            citasFiltradas.map(cita => `
+                <option value="${cita._id}">
+                    ${cita.paciente_id?.nombre || 'Paciente'} - ${cita.dentista_id?.nombre || 'Dentista'} - 
+                    ${new Date(cita.fecha_hora).toLocaleDateString()} - ${cita.servicio_id?.nombre || 'Servicio'}
+                </option>
+            `).join('');
+            
+        showMessage('mensaje-venta', `Se encontraron ${citasFiltradas.length} citas pendientes`, 'success');
+        
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al cargar citas pendientes: ' + error.message, 'error');
+    }
+}
+
+// Cargar datos de la cita seleccionada
+function cargarDatosCita() {
+    const citaId = document.getElementById('select-cita-pendiente').value;
+    
+    if (!citaId) {
+        limpiarSeleccionCita();
+        return;
+    }
+    
+    citaSeleccionada = citasPendientes.find(cita => cita._id === citaId);
+    
+    if (citaSeleccionada) {
+        // Mostrar información de la cita
+        document.getElementById('cita-paciente').textContent = citaSeleccionada.paciente_id?.nombre || 'N/A';
+        document.getElementById('cita-dentista').textContent = citaSeleccionada.dentista_id?.nombre || 'N/A';
+        document.getElementById('cita-servicio').textContent = citaSeleccionada.servicio_id?.nombre || 'N/A';
+        document.getElementById('cita-fecha').textContent = new Date(citaSeleccionada.fecha_hora).toLocaleString();
+        document.getElementById('cita-descripcion').textContent = citaSeleccionada.descripcion || 'Sin descripción';
+        
+        document.getElementById('info-cita-seleccionada').style.display = 'block';
+        
+        // Llenar automáticamente el paciente en el formulario
+        document.getElementById('venta-paciente-id').value = citaSeleccionada.paciente_id?._id || '';
+        
+        // Agregar automáticamente el servicio principal de la cita
+        agregarServicioDeCita();
+        
+        showMessage('mensaje-venta', 'Cita cargada exitosamente. Servicio principal agregado automáticamente.', 'success');
+    }
+}
+
+// Agregar el servicio principal de la cita a la venta
+function agregarServicioDeCita() {
+    if (!citaSeleccionada || !citaSeleccionada.servicio_id) return;
+    
+    const servicio = citaSeleccionada.servicio_id;
+    const dentista = citaSeleccionada.dentista_id;
+    
+    const item = {
+        tipo: 'servicio',
+        item_id: servicio._id,
+        dentista_id: dentista?._id,
+        descripcion: `${servicio.nombre} - ${dentista?.nombre || 'Dentista asignado'}`,
+        cantidad: 1,
+        precio: servicio.precio,
+        subtotal: servicio.precio,
+        esServicioPrincipal: true
+    };
+    
+    // Verificar si el servicio principal ya está agregado
+    const servicioYaAgregado = itemsVenta.some(item => 
+        item.esServicioPrincipal && item.item_id === servicio._id
+    );
+    
+    if (!servicioYaAgregado) {
+        itemsVenta.push(item);
         actualizarTablaVenta();
         calcularTotalVenta();
     }
+}
 
-    // Limpiar formulario completo
-    function limpiarFormularioVenta() {
-        if (confirm('¿Está seguro de que desea limpiar todo el formulario? Se perderán todos los datos.')) {
-            itemsVenta = [];
-            citaSeleccionada = null;
-            aplicarIVA = true;
-            document.getElementById('form-nueva-venta').reset();
-            document.getElementById('select-cita-pendiente').value = '';
-            document.getElementById('info-cita-seleccionada').style.display = 'none';
-            document.getElementById('iva-toggle').checked = true;
-            document.getElementById('iva-label').innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
-            document.getElementById('iva-label').style.color = '#27ae60';
-            actualizarTablaVenta();
-            calcularTotalVenta();
-            showMessage('mensaje-venta', 'Formulario limpiado exitosamente', 'success');
-        }
+// Limpiar selección de cita
+function limpiarSeleccionCita() {
+    citaSeleccionada = null;
+    document.getElementById('select-cita-pendiente').value = '';
+    document.getElementById('info-cita-seleccionada').style.display = 'none';
+    document.getElementById('venta-paciente-id').value = '';
+    
+    // Remover solo el servicio principal si existe
+    itemsVenta = itemsVenta.filter(item => !item.esServicioPrincipal);
+    actualizarTablaVenta();
+    calcularTotalVenta();
+}
+
+// Cargar selectores para venta
+async function cargarSelectoresVenta() {
+    try {
+        const [pacientesData, dentistasData, serviciosData, productosData] = await Promise.all([
+            apiCall('/pacientes'),
+            apiCall('/dentistas'),
+            apiCall('/servicios'),
+            apiCall('/productos')
+        ]);
+
+        // Selector de pacientes
+        const selectPaciente = document.getElementById('venta-paciente-id');
+        selectPaciente.innerHTML = '<option value="">Seleccionar paciente...</option>' +
+            pacientesData.filter(p => p.estatus === 'Activo')
+            .map(p => `<option value="${p._id}">${p.nombre}</option>`)
+            .join('');
+
+        // Selector de servicios adicionales
+        const selectServicioAdicional = document.getElementById('venta-servicio-adicional');
+        selectServicioAdicional.innerHTML = '<option value="">Seleccionar servicio adicional...</option>' +
+            serviciosData.filter(s => s.estatus === 'Activo')
+            .map(s => `<option value="${s._id}" data-precio="${s.precio}">${s.nombre} - ${formatCurrency(s.precio)}</option>`)
+            .join('');
+
+        // Selector de dentistas adicionales
+        const selectDentistaAdicional = document.getElementById('venta-dentista-adicional');
+        selectDentistaAdicional.innerHTML = '<option value="">Seleccionar dentista...</option>' +
+            dentistasData.filter(d => d.estado === 'Activo')
+            .map(d => `<option value="${d._id}">${d.nombre}</option>`)
+            .join('');
+
+        // Selector de productos
+        const selectProducto = document.getElementById('venta-producto-id');
+        selectProducto.innerHTML = '<option value="">Seleccionar producto...</option>' +
+            productosData.filter(p => p.cantidad > 0)
+            .map(p => `<option value="${p._id}" data-precio="${p.precio_venta}" data-stock="${p.cantidad}">${p.nombre} - ${formatCurrency(p.precio_venta)} (Stock: ${p.cantidad})</option>`)
+            .join('');
+
+        // Cargar citas pendientes automáticamente
+        await cargarCitasPendientes();
+
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al cargar los datos: ' + error.message, 'error');
     }
+}
 
-    // Form handler para ventas
-    document.getElementById('form-nueva-venta').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (itemsVenta.length === 0) {
-            showMessage('mensaje-venta', 'Debe agregar al menos un item a la venta', 'error');
-            return;
-        }
+// Agregar servicio adicional CORREGIDO
+function agregarServicioAdicional() {
+    const selectServicio = document.getElementById('venta-servicio-adicional');
+    const selectDentista = document.getElementById('venta-dentista-adicional');
+    
+    if (!selectServicio.value) {
+        showMessage('mensaje-venta', 'Debe seleccionar un servicio', 'error');
+        return;
+    }
+    
+    const servicioOption = selectServicio.selectedOptions[0];
+    const dentistaTexto = selectDentista.value ? 
+        selectDentista.options[selectDentista.selectedIndex].text : 'Sin dentista específico';
+    const precioBase = parseFloat(servicioOption.dataset.precio); // Precio en MXN
+    const servicioTexto = servicioOption.text.split(' - ')[0];
+    
+    const item = {
+        tipo: 'servicio',
+        item_id: selectServicio.value,
+        dentista_id: selectDentista.value || null,
+        descripcion: `${servicioTexto} - ${dentistaTexto}`,
+        cantidad: 1,
+        precioBase: precioBase, // Guardar precio base en MXN
+        precio: precioBase, // Precio actual (será convertido si es necesario)
+        subtotal: precioBase,
+        esServicioPrincipal: false
+    };
+    
+    itemsVenta.push(item);
+    actualizarTablaVenta();
+    calcularTotalVenta();
+    
+    // Limpiar selectores
+    selectServicio.value = '';
+    selectDentista.value = '';
+}
 
-        const metodoPago = document.getElementById('venta-metodo-pago').value;
-        const montoPagado = parseFloat(document.getElementById('venta-monto-pagado').value) || 0;
+// Agregar producto CORREGIDO
+function agregarProductoVenta() {
+    const selectProducto = document.getElementById('venta-producto-id');
+    const cantidad = parseInt(document.getElementById('venta-cantidad').value);
+    
+    if (!selectProducto.value || cantidad < 1) {
+        showMessage('mensaje-venta', 'Debe seleccionar un producto y una cantidad válida', 'error');
+        return;
+    }
+    
+    const productoOption = selectProducto.selectedOptions[0];
+    const precioBase = parseFloat(productoOption.dataset.precio); // Precio en MXN
+    const stock = parseInt(productoOption.dataset.stock);
+    const productotexto = productoOption.text.split(' - ')[0];
+    
+    if (cantidad > stock) {
+        showMessage('mensaje-venta', `Stock insuficiente. Disponible: ${stock}`, 'error');
+        return;
+    }
+    
+    const item = {
+        tipo: 'producto',
+        item_id: selectProducto.value,
+        descripcion: productotexto,
+        cantidad: cantidad,
+        precioBase: precioBase, // Guardar precio base en MXN
+        precio: precioBase, // Precio actual
+        subtotal: precioBase * cantidad
+    };
+    
+    itemsVenta.push(item);
+    actualizarTablaVenta();
+    calcularTotalVenta();
+    
+    // Limpiar selector
+    selectProducto.value = '';
+    document.getElementById('venta-cantidad').value = 1;
+}
+
+// Actualizar tabla de venta
+function actualizarTablaVenta() {
+    const tbody = document.getElementById('items-venta-body');
+    
+    if (itemsVenta.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay items agregados</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = itemsVenta.map((item, index) => `
+        <tr>
+            <td>
+                ${item.tipo}
+                ${item.esServicioPrincipal ? '<br><small style="color: #27ae60;">(Principal)</small>' : ''}
+            </td>
+            <td>${item.descripcion}</td>
+            <td>${item.cantidad}</td>
+            <td>${formatCurrency(item.precio)}</td>
+            <td>${formatCurrency(item.subtotal)}</td>
+            <td>
+                ${!item.esServicioPrincipal ? `
+                    <button class="danger" onclick="eliminarItemVenta(${index})">
+                        <i class="ri-delete-bin-fill"></i>
+                    </button>
+                ` : '<small style="color: #666;">No se puede eliminar</small>'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Manejo de múltiples monedas
+function actualizarTipoCambio() {
+    const monedaSelect = document.getElementById('venta-moneda');
+    const tipoCambioGroup = document.getElementById('tipo-cambio-group');
+    const infoMoneda = document.getElementById('info-moneda');
+    const textoInfoMoneda = document.getElementById('texto-info-moneda');
+    
+    if (monedaSelect.value === 'USD') {
+        tipoCambioGroup.style.display = 'block';
+        infoMoneda.style.display = 'block';
+        textoInfoMoneda.textContent = `Venta en Dólares Americanos (USD) - Tipo de cambio: ${document.getElementById('venta-tipo-cambio').value} MXN por 1 USD`;
+        obtenerTipoCambioActual();
+    } else {
+        tipoCambioGroup.style.display = 'none';
+        infoMoneda.style.display = 'block';
+        textoInfoMoneda.textContent = 'Venta en Pesos Mexicanos (MXN)';
+    }
+    calcularTotalVenta();
+}
+
+async function obtenerTipoCambioActual() {
+    try {
+        showMessage('mensaje-venta', 'Obteniendo tipo de cambio actual...', 'warning');
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        const tipoCambio = data.rates.MXN;
+        document.getElementById('venta-tipo-cambio').value = tipoCambio.toFixed(2);
+        showMessage('mensaje-venta', `Tipo de cambio actualizado: 1 USD = ${tipoCambio.toFixed(2)} MXN`, 'success');
+        calcularTotalVenta();
+    } catch (error) {
+        console.log('Usando tipo de cambio por defecto');
+        document.getElementById('venta-tipo-cambio').value = '20.0';
+        showMessage('mensaje-venta', 'Usando tipo de cambio por defecto: 1 USD = 20.00 MXN', 'warning');
+    }
+}
+
+// Calcular totales y cambio
+// Calcular totales CORREGIDO
+function calcularTotalVenta() {
+    // Calcular subtotal en la moneda base (MXN)
+    let subtotalBase = itemsVenta.reduce((sum, item) => {
+        // Si el item tiene precioBase, usarlo (es el precio original en MXN)
+        // Si no, asumir que el precio actual está en MXN
+        const precioBase = item.precioBase || item.precio;
+        return sum + (precioBase * item.cantidad);
+    }, 0);
+    
+    // Aplicar conversión si es USD
+    let subtotalMostrar = subtotalBase;
+    if (monedaActual === 'USD') {
+        subtotalMostrar = subtotalBase / tipoCambioActual;
+    }
+    
+    const iva = aplicarIVA ? subtotalMostrar * 0.16 : 0;
+    const total = subtotalMostrar + iva;
+
+    document.getElementById('venta-subtotal').value = formatCurrency(subtotalMostrar, monedaActual);
+    document.getElementById('venta-iva').value = formatCurrency(iva, monedaActual);
+    document.getElementById('venta-total').value = formatCurrency(total, monedaActual);
+
+    // Calcular cambio
+    const montoPagado = parseFloat(document.getElementById('venta-monto-pagado').value) || 0;
+    const cambio = Math.max(0, montoPagado - total);
+    document.getElementById('venta-cambio').value = formatCurrency(cambio, monedaActual);
+    
+    actualizarInfoMoneda();
+}
+
+// ==================== MANEJO DE MONEDAS MEJORADO ====================
+
+let tipoCambioActual = 20.0;
+let monedaActual = 'MXN';
+
+// Función para actualizar cuando cambia la moneda
+function actualizarMoneda() {
+    const monedaSelect = document.getElementById('venta-moneda');
+    const tipoCambioGroup = document.getElementById('tipo-cambio-group');
+    const infoMoneda = document.getElementById('info-moneda');
+    
+    monedaActual = monedaSelect.value;
+    
+    if (monedaActual === 'USD') {
+        tipoCambioGroup.style.display = 'block';
+        infoMoneda.style.display = 'block';
+        obtenerTipoCambioActual();
+    } else {
+        tipoCambioGroup.style.display = 'none';
+        infoMoneda.style.display = 'none';
+        // Convertir precios de vuelta a MXN si es necesario
+        recalcularPrecios();
+    }
+    
+    calcularTotalVenta();
+}
+
+// Obtener tipo de cambio actual
+async function obtenerTipoCambioActual() {
+    try {
+        showMessage('mensaje-venta', 'Obteniendo tipo de cambio actual...', 'warning');
+        const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await response.json();
+        tipoCambioActual = data.rates.MXN;
+        document.getElementById('venta-tipo-cambio').value = tipoCambioActual.toFixed(2);
+        showMessage('mensaje-venta', `Tipo de cambio actualizado: 1 USD = ${tipoCambioActual.toFixed(2)} MXN`, 'success');
+        recalcularPrecios();
+    } catch (error) {
+        console.log('Usando tipo de cambio por defecto');
+        tipoCambioActual = 20.0;
+        document.getElementById('venta-tipo-cambio').value = tipoCambioActual.toFixed(2);
+        showMessage('mensaje-venta', 'Usando tipo de cambio por defecto: 1 USD = 20.00 MXN', 'warning');
+        recalcularPrecios();
+    }
+}
+
+// Recalcular precios cuando cambia el tipo de cambio
+function recalcularPrecios() {
+    tipoCambioActual = parseFloat(document.getElementById('venta-tipo-cambio').value) || 20.0;
+    
+    if (monedaActual === 'USD' && itemsVenta.length > 0) {
+        // Actualizar la tabla mostrando precios en USD
+        actualizarTablaVenta();
+    }
+    
+    calcularTotalVenta();
+    actualizarInfoMoneda();
+}
+
+// Actualizar información de moneda
+function actualizarInfoMoneda() {
+    if (monedaActual === 'USD') {
+        const textoInfoMoneda = document.getElementById('texto-info-moneda');
         const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
         const total = aplicarIVA ? subtotal * 1.16 : subtotal;
+        
+        textoInfoMoneda.textContent = 
+            `Venta en Dólares Americanos (USD) - Tipo de cambio: ${tipoCambioActual} MXN por 1 USD - ` +
+            `Total aproximado en MXN: ${formatCurrency(total * tipoCambioActual, 'MXN')}`;
+    }
+}
 
-        if (!metodoPago) {
-            showMessage('mensaje-venta', 'Debe seleccionar un método de pago', 'error');
-            return;
-        }
 
-        // El monto pagado es opcional, si es 0 se considera como pendiente de pago
-        const estatusVenta = montoPagado >= total ? 'pagada' : 'pendiente';
+// Función para alternar IVA - CORREGIDA
+// Función para alternar IVA - COMPLETAMENTE CORREGIDA
+function toggleIVA() {
+    aplicarIVA = document.getElementById('iva-toggle').checked;
+    const ivaLabel = document.getElementById('iva-label');
+    
+    if (aplicarIVA) {
+        ivaLabel.innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
+        ivaLabel.style.color = '#27ae60';
+    } else {
+        ivaLabel.innerHTML = '<i class="ri-checkbox-blank-line"></i> Sin IVA';
+        ivaLabel.style.color = '#666';
+    }
+    
+    calcularTotalVenta();
+}
 
-        if (montoPagado > 0 && montoPagado < total) {
-            showMessage('mensaje-venta', `El monto pagado (${formatCurrency(montoPagado)}) es menor al total (${formatCurrency(total)})`, 'error');
-            return;
-        }
+// Eliminar item de venta
+function eliminarItemVenta(index) {
+    if (itemsVenta[index].esServicioPrincipal) {
+        showMessage('mensaje-venta', 'No se puede eliminar el servicio principal de la cita', 'error');
+        return;
+    }
+    itemsVenta.splice(index, 1);
+    actualizarTablaVenta();
+    calcularTotalVenta();
+}
 
-        setButtonLoading('btn-guardar-venta', true);
+// Limpiar formulario completo - VERSIÓN ACTUALIZADA
+function limpiarFormularioVenta() {
+    if (confirm('¿Está seguro de que desea limpiar todo el formulario? Se perderán todos los datos.')) {
+        itemsVenta = [];
+        citaSeleccionada = null;
+        aplicarIVA = true;
+        document.getElementById('form-nueva-venta').reset();
+        document.getElementById('select-cita-pendiente').value = '';
+        document.getElementById('info-cita-seleccionada').style.display = 'none';
+        document.getElementById('iva-toggle').checked = true;
+        document.getElementById('iva-label').innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
+        document.getElementById('iva-label').style.color = '#27ae60';
+        document.getElementById('venta-moneda').value = 'MXN'; // Resetear a MXN
+        document.getElementById('tipo-cambio-group').style.display = 'none';
+        document.getElementById('info-moneda').style.display = 'none';
+        actualizarTablaVenta();
+        calcularTotalVenta();
+        showMessage('mensaje-venta', 'Formulario limpiado exitosamente', 'success');
+    }
+}
 
-        try {
-            const formData = new FormData(e.target);
-            const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
-            const iva = aplicarIVA ? subtotal * 0.16 : 0;
-            const total = subtotal + iva;
-            const montoPagado = parseFloat(formData.get('monto_pagado')) || 0;
-            const cambio = Math.max(0, montoPagado - total);
+// Form handler para ventas - VERSIÓN ACTUALIZADA CON MÚLTIPLES MONEDAS
+document.getElementById('form-nueva-venta').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    if (itemsVenta.length === 0) {
+        showMessage('mensaje-venta', 'Debe agregar al menos un item a la venta', 'error');
+        return;
+    }
 
-            const ventaData = {
-                paciente_id: formData.get('paciente_id') || null,
-                cita_id: citaSeleccionada?._id || null,
-                items: itemsVenta.map(item => ({
-                    tipo: item.tipo,
-                    item_id: item.item_id,
-                    descripcion: item.descripcion,
-                    cantidad: item.cantidad,
-                    precio: item.precio,
-                    subtotal: item.subtotal,
-                    dentista_id: item.dentista_id || null
-                })),
-                subtotal: subtotal,
-                iva: iva,
-                total: total,
-                metodo_pago: formData.get('metodo_pago'),
-                monto_pagado: montoPagado,
-                cambio: cambio,
-                fecha_venta: new Date().toISOString(),
-                estatus: estatusVenta
-            };
+    const metodoPago = document.getElementById('venta-metodo-pago').value;
+    const moneda = document.getElementById('venta-moneda').value;
+    const tipoCambio = parseFloat(document.getElementById('venta-tipo-cambio').value) || 1;
+    const montoPagado = parseFloat(document.getElementById('venta-monto-pagado').value) || 0;
+    const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
+    const total = aplicarIVA ? subtotal * 1.16 : subtotal;
 
-            // 1. Crear la venta
-            const ventaCreada = await apiCall('/ventas', {
-                method: 'POST',
-                body: JSON.stringify(ventaData)
+    if (!metodoPago) {
+        showMessage('mensaje-venta', 'Debe seleccionar un método de pago', 'error');
+        return;
+    }
+
+    // El monto pagado es opcional, si es 0 se considera como pendiente de pago
+    const estatusVenta = 'pagada'; // Siempre pagada porque el pago se recibe al momento
+
+    // Extraer el valor numérico del total (quitando el símbolo de moneda)
+    const totalNumerico = parseFloat(document.getElementById('venta-total').value.replace(/[^0-9.-]+/g,""));
+
+    if (montoPagado > 0 && montoPagado < totalNumerico) {
+    showMessage('mensaje-venta', `El monto pagado (${formatCurrency(montoPagado, moneda)}) es menor al total (${formatCurrency(totalNumerico, moneda)})`, 'error');
+    return;
+    }
+
+    setButtonLoading('btn-guardar-venta', true);
+
+    try {
+        const formData = new FormData(e.target);
+        const subtotal = itemsVenta.reduce((sum, item) => sum + item.subtotal, 0);
+        const iva = aplicarIVA ? subtotal * 0.16 : 0;
+        const total = subtotal + iva;
+        const montoPagado = parseFloat(formData.get('monto_pagado')) || 0;
+        const cambio = Math.max(0, montoPagado - total);
+        const moneda = document.getElementById('venta-moneda').value;
+        const tipoCambio = parseFloat(document.getElementById('venta-tipo-cambio').value) || 1;
+
+        // Calcular totales en la moneda correcta
+let subtotalMoneda = subtotal;
+let ivaMoneda = iva;
+let totalMoneda = total;
+
+// Si la moneda es USD, convertir los totales de MXN a USD
+if (moneda === 'USD') {
+    subtotalMoneda = subtotal / tipoCambio;
+    ivaMoneda = iva / tipoCambio;
+    totalMoneda = total / tipoCambio;
+}
+
+const ventaData = {
+    paciente_id: formData.get('paciente_id') || null,
+    cita_id: citaSeleccionada?._id || null,
+    items: itemsVenta.map(item => ({
+        tipo: item.tipo,
+        item_id: item.item_id,
+        descripcion: item.descripcion,
+        cantidad: item.cantidad,
+        precio: item.precio, // Precio en MXN (precio base)
+        precio_moneda: moneda === 'USD' ? (item.precio / tipoCambio) : item.precio, // Precio en la moneda seleccionada
+        subtotal: item.subtotal, // Subtotal en MXN
+        subtotal_moneda: moneda === 'USD' ? (item.subtotal / tipoCambio) : item.subtotal, // Subtotal en la moneda seleccionada
+        dentista_id: item.dentista_id || null
+    })),
+    subtotal: subtotalMoneda, // Guardar en la moneda seleccionada
+    iva: ivaMoneda, // Guardar en la moneda seleccionada
+    total: totalMoneda, // Guardar en la moneda seleccionada
+    metodo_pago: formData.get('metodo_pago'),
+    moneda: moneda,
+    tipo_cambio: tipoCambio,
+    monto_pagado: montoPagado,
+    cambio: cambio,
+    fecha_venta: getFechaHoraLocal(),
+    estatus: 'pagada' // Siempre pagada
+};
+
+        // 1. Crear la venta
+        const ventaCreada = await apiCall('/ventas', {
+            method: 'POST',
+            body: JSON.stringify(ventaData)
+        });
+
+        // 2. Si hay cita seleccionada, actualizar su estado a "Completada"
+        if (citaSeleccionada && estatusVenta === 'pagada') {
+            await apiCall(`/citas/${citaSeleccionada._id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ 
+                    estatus: 'Completada',
+                    fecha_actualizacion: new Date()
+                })
             });
-
-            // 2. Si hay cita seleccionada, actualizar su estado a "Completada"
-            if (citaSeleccionada && estatusVenta === 'pagada') {
-                await apiCall(`/citas/${citaSeleccionada._id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ 
-                        estatus: 'Completada',
-                        fecha_actualizacion: new Date()
-                    })
-                });
-            }
-
-            let mensajeExito = 'Venta procesada exitosamente! ';
-            if (citaSeleccionada && estatusVenta === 'pagada') {
-                mensajeExito += 'Cita marcada como completada. ';
-            }
-            if (estatusVenta === 'pendiente') {
-                mensajeExito += 'La venta queda como pendiente de pago.';
-            }
-
-            showMessage('mensaje-venta', mensajeExito, 'success');
-            
-            // Limpiar formulario
-            itemsVenta = [];
-            citaSeleccionada = null;
-            aplicarIVA = true;
-            document.getElementById('form-nueva-venta').reset();
-            document.getElementById('select-cita-pendiente').value = '';
-            document.getElementById('info-cita-seleccionada').style.display = 'none';
-            document.getElementById('iva-toggle').checked = true;
-            document.getElementById('iva-label').innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
-            document.getElementById('iva-label').style.color = '#27ae60';
-            actualizarTablaVenta();
-            calcularTotalVenta();
-
-            // Recargar citas pendientes
-            await cargarCitasPendientes();
-
-        } catch (error) {
-            showMessage('mensaje-venta', 'Error al procesar venta: ' + error.message, 'error');
-        } finally {
-            setButtonLoading('btn-guardar-venta', false);
         }
-    });
 
-    // Event listeners para calcular automáticamente
-    document.getElementById('venta-monto-pagado').addEventListener('input', calcularTotalVenta);
-    document.getElementById('iva-toggle').addEventListener('change', toggleIVA);
-
-    // ==================== HISTORIAL DE VENTAS ====================
-    async function cargarVentas() {
-        showLoading('loading-ventas', true);
-        setButtonLoading('btn-cargar-ventas', true);
-
-        try {
-            const ventasData = await apiCall('/ventas');
-            const tbody = document.getElementById('ventas-body');
-            
-            if (ventasData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay ventas registradas</td></tr>';
-                return;
-            }
-
-            // Calcular estadísticas
-            const totalVentas = ventasData.reduce((sum, venta) => sum + venta.total, 0);
-            const ventasEfectivo = ventasData
-                .filter(v => v.metodo_pago === 'efectivo')
-                .reduce((sum, venta) => sum + venta.total, 0);
-            const ventasTarjeta = ventasData
-                .filter(v => v.metodo_pago === 'tarjeta')
-                .reduce((sum, venta) => sum + venta.total, 0);
-
-            document.getElementById('total-ventas').textContent = formatCurrency(totalVentas);
-            document.getElementById('total-efectivo').textContent = formatCurrency(ventasEfectivo);
-            document.getElementById('total-tarjeta').textContent = formatCurrency(ventasTarjeta);
-
-            tbody.innerHTML = ventasData.map(venta => `
-                <tr>
-                    <td>${new Date(venta.fecha_venta).toLocaleDateString()}</td>
-                    <td>${venta.paciente_id?.nombre || 'No especificado'}</td>
-                    <td>${venta.items.length} items</td>
-                    <td>${venta.metodo_pago}</td>
-                    <td>${formatCurrency(venta.total)}</td>
-                    <td>
-                        <span class="status-badge ${venta.estatus === 'pagada' ? 'status-success' : 'status-warning'}" style="margin-right: 10px;">
-                            ${venta.estatus === 'pagada' ? 'Pagada' : 'Pendiente'}
-                        </span>
-                        <button onclick="verDetallesVenta('${venta._id}')" class="secondary">Ver Detalles</button>
-                        ${venta.estatus === 'pendiente' ? 
-                            `<button onclick="marcarVentaPagada('${venta._id}')" class="success">Marcar Pagada</button>` : 
-                            ''
-                        }
-                    </td>
-                </tr>
-            `).join('');
-
-        } catch (error) {
-            showMessage('mensaje-venta', 'Error al cargar ventas: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-ventas', false);
-            setButtonLoading('btn-cargar-ventas', false);
+        let mensajeExito = `Venta en ${moneda} procesada exitosamente! `;
+        if (citaSeleccionada && estatusVenta === 'pagada') {
+            mensajeExito += 'Cita marcada como completada. ';
         }
+        if (estatusVenta === 'pendiente') {
+            mensajeExito += 'La venta queda como pendiente de pago.';
+        }
+
+        showMessage('mensaje-venta', mensajeExito, 'success');
+        
+        // Limpiar formulario
+        itemsVenta = [];
+        citaSeleccionada = null;
+        aplicarIVA = true;
+        document.getElementById('form-nueva-venta').reset();
+        document.getElementById('select-cita-pendiente').value = '';
+        document.getElementById('info-cita-seleccionada').style.display = 'none';
+        document.getElementById('iva-toggle').checked = true;
+        document.getElementById('iva-label').innerHTML = '<i class="ri-checkbox-fill"></i> IVA Incluido (16%)';
+        document.getElementById('iva-label').style.color = '#27ae60';
+        document.getElementById('venta-moneda').value = 'MXN'; // Resetear a MXN
+        document.getElementById('tipo-cambio-group').style.display = 'none';
+        document.getElementById('info-moneda').style.display = 'none';
+        actualizarTablaVenta();
+        calcularTotalVenta();
+
+        // Recargar citas pendientes
+        await cargarCitasPendientes();
+
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al procesar venta: ' + error.message, 'error');
+    } finally {
+        setButtonLoading('btn-guardar-venta', false);
+    }
+});
+
+// ==================== HISTORIAL DE VENTAS CON FILTROS Y PAGINACIÓN ====================
+
+// Función principal para cargar ventas
+async function cargarVentas() {
+    // Establecer fechas por defecto como el día actual (fecha local)
+    const hoy = getFechaLocal();
+    document.getElementById('filtro-fecha-inicio').value = hoy;
+    document.getElementById('filtro-fecha-fin').value = hoy;
+    
+    showLoading('loading-ventas', true);
+    setButtonLoading('btn-cargar-ventas', true);
+
+    try {
+        await aplicarFiltrosVentas();
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al cargar ventas: ' + error.message, 'error');
+        document.getElementById('ventas-body').innerHTML = 
+            '<tr><td colspan="8" style="text-align: center; color: red;">Error al cargar ventas</td></tr>';
+    } finally {
+        showLoading('loading-ventas', false);
+        setButtonLoading('btn-cargar-ventas', false);
+    }
+}
+
+// Aplicar filtros
+async function aplicarFiltrosVentas() {
+    const fechaInicio = document.getElementById('filtro-fecha-inicio').value;
+    const fechaFin = document.getElementById('filtro-fecha-fin').value;
+    const moneda = document.getElementById('filtro-moneda').value;
+    const metodoPago = document.getElementById('filtro-metodo-pago').value;
+    const estatus = document.getElementById('filtro-estatus').value;
+    
+    let url = '/ventas?';
+    const params = [];
+    
+    if (fechaInicio && fechaFin) {
+    // Ajustar fechaFin para que incluya todo el día sumando 1 día (usando fecha local)
+    const fechaFinAjustada = new Date(fechaFin);
+    fechaFinAjustada.setDate(fechaFinAjustada.getDate() + 1);
+    
+    const año = fechaFinAjustada.getFullYear();
+    const mes = String(fechaFinAjustada.getMonth() + 1).padStart(2, '0');
+    const dia = String(fechaFinAjustada.getDate()).padStart(2, '0');
+    const fechaFinString = `${año}-${mes}-${dia}`;
+    
+    params.push(`fecha_inicio=${fechaInicio}&fecha_fin=${fechaFinString}`);
+    }
+    if (moneda) params.push(`moneda=${moneda}`);
+    if (metodoPago) params.push(`metodo_pago=${metodoPago}`);
+    if (estatus) params.push(`estatus=${estatus}`);
+    
+    url += params.join('&');
+    
+    showLoading('loading-ventas', true);
+
+    try {
+        const ventas = await apiCall(url);
+        ventasFiltradas = ventas;
+        paginaActual = 1;
+        mostrarVentasFiltradas(ventas);
+        calcularEstadisticas(ventas);
+        mostrarResumenFiltros(fechaInicio, fechaFin, moneda, metodoPago, estatus);
+        
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al aplicar filtros: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-ventas', false);
+    }
+}
+
+// Mostrar resumen de filtros aplicados
+function mostrarResumenFiltros(fechaInicio, fechaFin, moneda, metodoPago, estatus) {
+    const resumenFiltros = document.getElementById('resumen-filtros');
+    const textoFiltros = document.getElementById('texto-filtros-aplicados');
+    const filtros = [];
+    
+    if (fechaInicio && fechaFin) {
+        filtros.push(`Fecha: ${fechaInicio} a ${fechaFin}`);
+    }
+    if (moneda) filtros.push(`Moneda: ${moneda}`);
+    if (metodoPago) filtros.push(`Método: ${metodoPago}`);
+    if (estatus) filtros.push(`Estatus: ${estatus}`);
+    
+    if (filtros.length > 0) {
+        textoFiltros.textContent = `Filtros aplicados: ${filtros.join(' • ')}`;
+        resumenFiltros.style.display = 'block';
+    } else {
+        resumenFiltros.style.display = 'none';
+    }
+}
+
+// Limpiar filtros
+function limpiarFiltrosVentas() {
+    const hoy = getFechaLocal();
+    document.getElementById('filtro-fecha-inicio').value = hoy;
+    document.getElementById('filtro-fecha-fin').value = hoy;
+    document.getElementById('filtro-moneda').value = '';
+    document.getElementById('filtro-metodo-pago').value = '';
+    document.getElementById('filtro-estatus').value = '';
+    document.getElementById('resumen-filtros').style.display = 'none';
+    
+    cargarVentas();
+}
+
+// Mostrar ventas filtradas con paginación
+function mostrarVentasFiltradas(ventas) {
+    const tbody = document.getElementById('ventas-body');
+    const contador = document.getElementById('contador-ventas');
+    const paginacion = document.getElementById('paginacion-ventas');
+    
+    contador.textContent = ventas.length;
+    
+    if (ventas.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align: center; padding: 3rem;">
+                    <i class="ri-search-line" style="font-size: 3rem; color: #cbd5e0; margin-bottom: 1rem; display: block;"></i>
+                    <h4 style="color: #718096; margin-bottom: 0.5rem;">No se encontraron ventas</h4>
+                    <p style="color: #a0aec0;">Intenta con otros filtros de búsqueda</p>
+                </td>
+            </tr>
+        `;
+        paginacion.style.display = 'none';
+        return;
     }
 
-    // ==================== CORTE DE CAJA ====================
-    async function generarCorteCaja() {
-        showLoading('loading-corte', true);
-        setButtonLoading('btn-generar-corte', true);
+    // Calcular paginación
+    const totalPaginas = Math.ceil(ventas.length / ventasPorPagina);
+    const inicio = (paginaActual - 1) * ventasPorPagina;
+    const fin = inicio + ventasPorPagina;
+    const ventasPagina = ventas.slice(inicio, fin);
 
-        try {
-            const fecha = document.getElementById('fecha-corte').value;
-            if (!fecha) {
-                showMessage('mensaje-venta', 'Debe seleccionar una fecha', 'error');
-                return;
-            }
+    tbody.innerHTML = ventasPagina.map(venta => `
+        <tr>
+            <td>${new Date(venta.fecha_venta).toLocaleDateString()}<br>
+                <small style="color: #718096;">${new Date(venta.fecha_venta).toLocaleTimeString()}</small>
+            </td>
+            <td>${venta.paciente_id?.nombre || 'No especificado'}</td>
+            <td>
+                ${venta.items.length} items
+                <br><small style="color: #718096;">${venta.items.slice(0, 2).map(item => item.descripcion.split(' - ')[0]).join(', ')}${venta.items.length > 2 ? '...' : ''}</small>
+            </td>
+            <td>
+                <span class="badge-pago" style="padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; background: ${getColorMetodoPago(venta.metodo_pago)}; color: white;">
+                    ${venta.metodo_pago}
+                </span>
+            </td>
+            <td>
+                <span class="badge-moneda" style="padding: 4px 8px; border-radius: 12px; font-size: 0.8rem; background: ${venta.moneda === 'USD' ? '#10b981' : '#3b82f6'}; color: white;">
+                    ${venta.moneda}
+                </span>
+                ${venta.moneda === 'USD' ? `<br><small style="color: #718096;">TC: ${venta.tipo_cambio}</small>` : ''}
+            </td>
+            <td>
+                <strong>${formatCurrency(venta.total, venta.moneda)}</strong>
+                ${venta.moneda === 'USD' && venta.tipo_cambio ? `<br><small style="color: #718096;">≈ ${formatCurrency(venta.total * venta.tipo_cambio, 'MXN')}</small>` : ''}
+            </td>
+            <td>
+                <span class="status-badge ${getClaseEstatus(venta.estatus)}">
+                    ${venta.estatus}
+                </span>
+            </td>
+            <td>
+                <button onclick="verDetallesVenta('${venta._id}')" class="secondary">
+                <i class="ri-eye-fill"></i> Ver Detalles
+            </button>
+            </td>
+        </tr>
+    `).join('');
 
-            const corte = await apiCall(`/ventas/corte-caja?fecha=${fecha}`);
-            
-            document.getElementById('corte-efectivo').textContent = formatCurrency(corte.efectivo || 0);
-            document.getElementById('corte-tarjeta').textContent = formatCurrency(corte.tarjeta || 0);
-            document.getElementById('corte-total').textContent = formatCurrency(corte.total || 0);
-
-            const detalle = document.getElementById('detalle-corte');
-            detalle.innerHTML = `
-                <div class="card">
-                    <h3>Detalle del Corte - ${fecha}</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Concepto</th>
-                                <th>Método Pago</th>
-                                <th>Monto</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${corte.detalle ? corte.detalle.map(item => `
-                                <tr>
-                                    <td>${new Date(item.fecha_venta).toLocaleTimeString()}</td>
-                                    <td>${item.descripcion}</td>
-                                    <td>${item.metodo_pago}</td>
-                                    <td>${formatCurrency(item.total)}</td>
-                                </tr>
-                            `).join('') : '<tr><td colspan="4" style="text-align: center;">No hay ventas para esta fecha</td></tr>'}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            document.getElementById('resultado-corte').style.display = 'block';
-
-        } catch (error) {
-            showMessage('mensaje-venta', 'Error al generar corte de caja: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-corte', false);
-            setButtonLoading('btn-generar-corte', false);
-        }
+    // Mostrar/ocultar paginación
+    if (totalPaginas > 1) {
+        paginacion.style.display = 'block';
+        document.getElementById('info-pagina').textContent = `Página ${paginaActual} de ${totalPaginas}`;
+        document.getElementById('btn-pagina-anterior').disabled = paginaActual === 1;
+        document.getElementById('btn-pagina-siguiente').disabled = paginaActual === totalPaginas;
+    } else {
+        paginacion.style.display = 'none';
     }
+}
 
-    // ==================== NÓMINA ====================
-    async function calcularNomina() {
-        showLoading('loading-nomina', true);
-        setButtonLoading('btn-calcular-nomina', true);
+// Cambiar página
+function cambiarPagina(direccion) {
+    const totalPaginas = Math.ceil(ventasFiltradas.length / ventasPorPagina);
+    paginaActual += direccion;
+    
+    if (paginaActual < 1) paginaActual = 1;
+    if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+    
+    mostrarVentasFiltradas(ventasFiltradas);
+}
 
-        try {
-            const fechaInicio = document.getElementById('fecha-inicio-nomina').value;
-            const fechaFin = document.getElementById('fecha-fin-nomina').value;
-            
-            if (!fechaInicio || !fechaFin) {
-                showMessage('mensaje-nomina', 'Debe seleccionar ambas fechas', 'error');
-                return;
-            }
+// Calcular estadísticas por moneda
+function calcularEstadisticas(ventas) {
+    const ventasMXN = ventas.filter(v => v.moneda === 'MXN' && v.estatus === 'pagada');
+    const ventasUSD = ventas.filter(v => v.moneda === 'USD' && v.estatus === 'pagada');
+    
+    const totalMXN = ventasMXN.reduce((sum, venta) => sum + venta.total, 0);
+    const totalUSD = ventasUSD.reduce((sum, venta) => sum + venta.total, 0);
+    
+    document.getElementById('total-mxn').textContent = formatCurrency(totalMXN, 'MXN');
+    document.getElementById('total-usd').textContent = formatCurrency(totalUSD, 'USD'); // ← CORREGIDO: Usar 'USD' aquí
+    document.getElementById('total-ventas').textContent = ventas.filter(v => v.estatus === 'pagada').length;
+}
 
-            const nomina = await apiCall(`/nomina/calcular?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`);
-            
-            const tbody = document.getElementById('nomina-body');
-            let totalNomina = 0;
-            let dentistasActivos = 0;
-            let comisionesPendientes = 0;
+// Funciones auxiliares
+function getColorMetodoPago(metodo) {
+    const colores = {
+        'efectivo': '#10b981',
+        'tarjeta': '#f59e0b',
+        'transferencia': '#8b5cf6'
+    };
+    return colores[metodo] || '#6b7280';
+}
 
-            if (nomina.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay datos de nómina para el periodo seleccionado</td></tr>';
-            } else {
-                tbody.innerHTML = nomina.map(dentista => {
-                    totalNomina += dentista.comision_ganada;
-                    if (dentista.estado === 'Activo') dentistasActivos++;
-                    if (dentista.estatus_pago === 'Pendiente') comisionesPendientes += dentista.comision_ganada;
-                    
-                    return `
+function getClaseEstatus(estatus) {
+    const clases = {
+        'pagada': 'status-success',
+        'pendiente': 'status-warning',
+        'cancelada': 'status-error'
+    };
+    return clases[estatus] || 'status-warning';
+}
+
+// Exportar ventas (función básica)
+function exportarVentas() {
+    if (ventasFiltradas.length === 0) {
+        showMessage('mensaje-venta', 'No hay ventas para exportar', 'warning');
+        return;
+    }
+    
+    const csv = convertirVentasACSV(ventasFiltradas);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `ventas_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+    
+    showMessage('mensaje-venta', `Exportadas ${ventasFiltradas.length} ventas`, 'success');
+}
+
+function convertirVentasACSV(ventas) {
+    const headers = ['Fecha', 'Paciente', 'Items', 'Moneda', 'Tipo Cambio', 'Subtotal', 'IVA', 'Total', 'Método Pago', 'Estatus'];
+    const rows = ventas.map(venta => [
+        new Date(venta.fecha_venta).toLocaleDateString(),
+        venta.paciente_id?.nombre || 'N/A',
+        venta.items.length,
+        venta.moneda,
+        venta.tipo_cambio,
+        venta.subtotal,
+        venta.iva,
+        venta.total,
+        venta.metodo_pago,
+        venta.estatus
+    ]);
+    
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
+}
+
+// ==================== CORTE DE CAJA ====================
+async function generarCorteCaja() {
+    showLoading('loading-corte', true);
+    setButtonLoading('btn-generar-corte', true);
+
+    try {
+        const fecha = document.getElementById('fecha-corte').value;
+        if (!fecha) {
+            showMessage('mensaje-venta', 'Debe seleccionar una fecha', 'error');
+            return;
+        }
+
+        const corte = await apiCall(`/ventas/corte-caja?fecha=${fecha}`);
+        
+        document.getElementById('corte-efectivo').textContent = formatCurrency(corte.efectivo || 0);
+        document.getElementById('corte-tarjeta').textContent = formatCurrency(corte.tarjeta || 0);
+        document.getElementById('corte-total').textContent = formatCurrency(corte.total || 0);
+
+        const detalle = document.getElementById('detalle-corte');
+        detalle.innerHTML = `
+            <div class="card">
+                <h3>Detalle del Corte - ${fecha}</h3>
+                <table>
+                    <thead>
                         <tr>
-                            <td>${dentista.nombre}</td>
-                            <td>${dentista.cantidad_ventas || 0}</td>
-                            <td>${formatCurrency(dentista.total_ventas || 0)}</td>
-                            <td>${dentista.comision}%</td>
-                            <td>${formatCurrency(dentista.comision_ganada || 0)}</td>
-                            <td>${dentista.estatus_pago || 'Pendiente'}</td>
-                            <td>
-                                <button onclick="pagarComision('${dentista._id}')" class="success">Pagar</button>
-                            </td>
+                            <th>Hora</th>
+                            <th>Concepto</th>
+                            <th>Método Pago</th>
+                            <th>Monto</th>
                         </tr>
-                    `;
-                }).join('');
-            }
+                    </thead>
+                    <tbody>
+                        ${corte.detalle ? corte.detalle.map(item => `
+                            <tr>
+                                <td>${new Date(item.fecha_venta).toLocaleTimeString()}</td>
+                                <td>${item.descripcion}</td>
+                                <td>${item.metodo_pago}</td>
+                                <td>${formatCurrency(item.total)}</td>
+                            </tr>
+                        `).join('') : '<tr><td colspan="4" style="text-align: center;">No hay ventas para esta fecha</td></tr>'}
+                    </tbody>
+                </table>
+            </div>
+        `;
 
-            document.getElementById('total-nomina').textContent = formatCurrency(totalNomina);
-            document.getElementById('dentistas-activos').textContent = dentistasActivos;
-            document.getElementById('comisiones-pendientes').textContent = formatCurrency(comisionesPendientes);
-            document.getElementById('resultado-nomina').style.display = 'block';
+        document.getElementById('resultado-corte').style.display = 'block';
 
-        } catch (error) {
-            showMessage('mensaje-nomina', 'Error al calcular nómina: ' + error.message, 'error');
-        } finally {
-            showLoading('loading-nomina', false);
-            setButtonLoading('btn-calcular-nomina', false);
-        }
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al generar corte de caja: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-corte', false);
+        setButtonLoading('btn-generar-corte', false);
     }
+}
 
-    // ==================== FUNCIONES AUXILIARES ====================
-    function cerrarModal() {
-        document.getElementById('modal-detalles').style.display = 'none';
-    }
+// ==================== NÓMINA ====================
+async function calcularNomina() {
+    showLoading('loading-nomina', true);
+    setButtonLoading('btn-calcular-nomina', true);
 
-    async function verDetallesVenta(ventaId) {
-        try {
-            const venta = await apiCall(`/ventas/${ventaId}`);
-            const modal = document.getElementById('modal-detalles');
-            const modalBody = document.getElementById('modal-body');
-            
-            modalBody.innerHTML = `
-                <h3>Detalles de Venta</h3>
-                <p><strong>Fecha:</strong> ${new Date(venta.fecha_venta).toLocaleString()}</p>
-                <p><strong>Paciente:</strong> ${venta.paciente_id?.nombre || 'No especificado'}</p>
-                <p><strong>Método de Pago:</strong> ${venta.metodo_pago}</p>
-                <p><strong>Subtotal:</strong> ${formatCurrency(venta.subtotal)}</p>
-                <p><strong>IVA:</strong> ${formatCurrency(venta.iva)}</p>
-                <p><strong>Total:</strong> ${formatCurrency(venta.total)}</p>
-                <p><strong>Monto Pagado:</strong> ${formatCurrency(venta.monto_pagado || 0)}</p>
-                <p><strong>Cambio:</strong> ${formatCurrency(venta.cambio || 0)}</p>
-                <p><strong>Estatus:</strong> <span class="status-badge ${venta.estatus === 'pagada' ? 'status-success' : 'status-warning'}">${venta.estatus}</span></p>
-                <h4>Items:</h4>
-                <ul>
-                    ${venta.items.map(item => `
-                        <li>${item.descripcion} - ${item.cantidad} x ${formatCurrency(item.precio)} = ${formatCurrency(item.subtotal)}</li>
-                    `).join('')}
-                </ul>
-            `;
-            
-            modal.style.display = 'flex';
-        } catch (error) {
-            console.error('Error al cargar detalles de venta:', error);
-            showMessage('mensaje-venta', 'Error al cargar detalles: ' + error.message, 'error');
-        }
-    }
-
-    async function marcarVentaPagada(ventaId) {
-        try {
-            await apiCall(`/ventas/${ventaId}/pagar`, { method: 'PUT' });
-            showMessage('mensaje-venta', 'Venta marcada como pagada', 'success');
-            cargarVentas();
-        } catch (error) {
-            showMessage('mensaje-venta', 'Error al marcar venta como pagada: ' + error.message, 'error');
-        }
-    }
-
-    async function pagarComision(dentistaId) {
-        if (confirm('¿Desea marcar esta comisión como pagada?')) {
-            try {
-                await apiCall(`/nomina/pagar/${dentistaId}`, { method: 'PUT' });
-                showMessage('mensaje-nomina', 'Comisión marcada como pagada', 'success');
-                calcularNomina();
-            } catch (error) {
-                showMessage('mensaje-nomina', 'Error al pagar comisión: ' + error.message, 'error');
-            }
-        }
-    }
-
-    // Funciones para eliminar
-    async function eliminarPaciente(id) {
-        if (confirm('¿Está seguro de que desea eliminar este paciente?')) {
-            try {
-                await apiCall(`/pacientes/${id}`, { method: 'DELETE' });
-                showMessage('mensaje-paciente', 'Paciente eliminado exitosamente', 'success');
-                cargarPacientes();
-            } catch (error) {
-                showMessage('mensaje-paciente', 'Error al eliminar paciente: ' + error.message, 'error');
-            }
-        }
-    }
-
-    async function eliminarDentista(id) {
-        if (confirm('¿Está seguro de que desea eliminar este dentista?')) {
-            try {
-                await apiCall(`/dentistas/${id}`, { method: 'DELETE' });
-                showMessage('mensaje-dentista', 'Dentista eliminado exitosamente', 'success');
-                cargarDentistas();
-            } catch (error) {
-                showMessage('mensaje-dentista', 'Error al eliminar dentista: ' + error.message, 'error');
-            }
-        }
-    }
-
-    async function eliminarServicio(id) {
-        if (confirm('¿Está seguro de que desea eliminar este servicio?')) {
-            try {
-                await apiCall(`/servicios/${id}`, { method: 'DELETE' });
-                showMessage('mensaje-servicio', 'Servicio eliminado exitosamente', 'success');
-                cargarServicios();
-            } catch (error) {
-                showMessage('mensaje-servicio', 'Error al eliminar servicio: ' + error.message, 'error');
-            }
-        }
-    }
-
-    async function eliminarProducto(id) {
-        if (confirm('¿Está seguro de que desea eliminar este producto?')) {
-            try {
-                await apiCall(`/productos/${id}`, { method: 'DELETE' });
-                showMessage('mensaje-producto', 'Producto eliminado exitosamente', 'success');
-                cargarProductos();
-            } catch (error) {
-                showMessage('mensaje-producto', 'Error al eliminar producto: ' + error.message, 'error');
-            }
-        }
-    }
-
-    async function cancelarCita(id) {
-        if (confirm('¿Está seguro de que desea cancelar esta cita?')) {
-            try {
-                await apiCall(`/citas/${id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ estatus: 'Cancelada' })
-                });
-                showMessage('mensaje-cita', 'Cita cancelada exitosamente', 'success');
-                cargarCitas();
-            } catch (error) {
-                showMessage('mensaje-cita', 'Error al cancelar cita: ' + error.message, 'error');
-            }
-        }
-    }
-
-    // Funciones de edición (placeholder)
-    function editarPaciente(id) {
-        alert(`Editar paciente con ID: ${id} - Funcionalidad en desarrollo`);
-    }
-
-    function editarDentista(id) {
-        alert(`Editar dentista con ID: ${id} - Funcionalidad en desarrollo`);
-    }
-
-    function editarServicio(id) {
-        alert(`Editar servicio con ID: ${id} - Funcionalidad en desarrollo`);
-    }
-
-    function editarProducto(id) {
-        alert(`Editar producto con ID: ${id} - Funcionalidad en desarrollo`);
-    }
-
-    // ==================== INICIALIZACIÓN ====================
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verificar autenticación
-        if (!checkAuth()) {
+    try {
+        const fechaInicio = document.getElementById('fecha-inicio-nomina').value;
+        const fechaFin = document.getElementById('fecha-fin-nomina').value;
+        
+        if (!fechaInicio || !fechaFin) {
+            showMessage('mensaje-nomina', 'Debe seleccionar ambas fechas', 'error');
             return;
         }
 
-        // Establecer fecha actual en el campo de corte de caja
-        const hoy = new Date().toISOString().split('T')[0];
-        document.getElementById('fecha-corte').value = hoy;
+        const nomina = await apiCall(`/nomina/calcular?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`);
         
-        // Probar conexión inicial
-        setTimeout(() => {
-            apiCall('/health').then(() => {
-                updateConnectionStatus(true);
-            }).catch(() => {
-                updateConnectionStatus(false);
+        const tbody = document.getElementById('nomina-body');
+        let totalNomina = 0;
+        let dentistasActivos = 0;
+        let comisionesPendientes = 0;
+
+        if (nomina.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay datos de nómina para el periodo seleccionado</td></tr>';
+        } else {
+            tbody.innerHTML = nomina.map(dentista => {
+                totalNomina += dentista.comision_ganada;
+                if (dentista.estado === 'Activo') dentistasActivos++;
+                if (dentista.estatus_pago === 'Pendiente') comisionesPendientes += dentista.comision_ganada;
+                
+                return `
+                    <tr>
+                        <td>${dentista.nombre}</td>
+                        <td>${dentista.cantidad_ventas || 0}</td>
+                        <td>${formatCurrency(dentista.total_ventas || 0)}</td>
+                        <td>${dentista.comision}%</td>
+                        <td>${formatCurrency(dentista.comision_ganada || 0)}</td>
+                        <td>${dentista.estatus_pago || 'Pendiente'}</td>
+                        <td>
+                            <button onclick="pagarComision('${dentista._id}')" class="success">Pagar</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('total-nomina').textContent = formatCurrency(totalNomina);
+        document.getElementById('dentistas-activos').textContent = dentistasActivos;
+        document.getElementById('comisiones-pendientes').textContent = formatCurrency(comisionesPendientes);
+        document.getElementById('resultado-nomina').style.display = 'block';
+
+    } catch (error) {
+        showMessage('mensaje-nomina', 'Error al calcular nómina: ' + error.message, 'error');
+    } finally {
+        showLoading('loading-nomina', false);
+        setButtonLoading('btn-calcular-nomina', false);
+    }
+}
+
+// ==================== FUNCIONES AUXILIARES ====================
+function cerrarModal() {
+    document.getElementById('modal-detalles').style.display = 'none';
+}
+
+async function verDetallesVenta(ventaId) {
+    try {
+        const venta = await apiCall(`/ventas/${ventaId}`);
+        const modal = document.getElementById('modal-detalles');
+        const modalBody = document.getElementById('modal-body');
+        
+        modalBody.innerHTML = `
+            <h3>Detalles de Venta</h3>
+            <p><strong>Fecha:</strong> ${new Date(venta.fecha_venta).toLocaleString()}</p>
+            <p><strong>Paciente:</strong> ${venta.paciente_id?.nombre || 'No especificado'}</p>
+            <p><strong>Método de Pago:</strong> ${venta.metodo_pago}</p>
+            <p><strong>Moneda:</strong> ${venta.moneda}</p>
+            ${venta.moneda === 'USD' ? `<p><strong>Tipo de Cambio:</strong> ${venta.tipo_cambio}</p>` : ''}
+            <p><strong>Subtotal:</strong> ${formatCurrency(venta.subtotal, venta.moneda)}</p>
+            <p><strong>IVA:</strong> ${formatCurrency(venta.iva, venta.moneda)}</p>
+            <p><strong>Total:</strong> ${formatCurrency(venta.total, venta.moneda)}</p>
+            ${venta.moneda === 'USD' ? `<p><strong>Total en MXN:</strong> ${formatCurrency(venta.total * venta.tipo_cambio, 'MXN')}</p>` : ''}
+            <p><strong>Monto Pagado:</strong> ${formatCurrency(venta.monto_pagado || 0, venta.moneda)}</p>
+            <p><strong>Cambio:</strong> ${formatCurrency(venta.cambio || 0, venta.moneda)}</p>
+            <p><strong>Estatus:</strong> <span class="status-badge ${venta.estatus === 'pagada' ? 'status-success' : 'status-warning'}">${venta.estatus}</span></p>
+            <h4>Items:</h4>
+            <ul>
+                ${venta.items.map(item => `
+                    <li>${item.descripcion} - ${item.cantidad} x ${formatCurrency(item.precio, venta.moneda)} = ${formatCurrency(item.subtotal, venta.moneda)}</li>
+                `).join('')}
+            </ul>
+        `;
+        
+        modal.style.display = 'flex';
+    } catch (error) {
+        console.error('Error al cargar detalles de venta:', error);
+        showMessage('mensaje-venta', 'Error al cargar detalles: ' + error.message, 'error');
+    }
+}
+
+async function marcarVentaPagada(ventaId) {
+    try {
+        await apiCall(`/ventas/${ventaId}/pagar`, { method: 'PUT' });
+        showMessage('mensaje-venta', 'Venta marcada como pagada', 'success');
+        cargarVentas();
+    } catch (error) {
+        showMessage('mensaje-venta', 'Error al marcar venta como pagada: ' + error.message, 'error');
+    }
+}
+
+async function pagarComision(dentistaId) {
+    if (confirm('¿Desea marcar esta comisión como pagada?')) {
+        try {
+            await apiCall(`/nomina/pagar/${dentistaId}`, { method: 'PUT' });
+            showMessage('mensaje-nomina', 'Comisión marcada como pagada', 'success');
+            calcularNomina();
+        } catch (error) {
+            showMessage('mensaje-nomina', 'Error al pagar comisión: ' + error.message, 'error');
+        }
+    }
+}
+
+// Funciones para eliminar
+async function eliminarPaciente(id) {
+    if (confirm('¿Está seguro de que desea eliminar este paciente?')) {
+        try {
+            await apiCall(`/pacientes/${id}`, { method: 'DELETE' });
+            showMessage('mensaje-paciente', 'Paciente eliminado exitosamente', 'success');
+            cargarPacientes();
+        } catch (error) {
+            showMessage('mensaje-paciente', 'Error al eliminar paciente: ' + error.message, 'error');
+        }
+    }
+}
+
+async function eliminarDentista(id) {
+    if (confirm('¿Está seguro de que desea eliminar este dentista?')) {
+        try {
+            await apiCall(`/dentistas/${id}`, { method: 'DELETE' });
+            showMessage('mensaje-dentista', 'Dentista eliminado exitosamente', 'success');
+            cargarDentistas();
+        } catch (error) {
+            showMessage('mensaje-dentista', 'Error al eliminar dentista: ' + error.message, 'error');
+        }
+    }
+}
+
+async function eliminarServicio(id) {
+    if (confirm('¿Está seguro de que desea eliminar este servicio?')) {
+        try {
+            await apiCall(`/servicios/${id}`, { method: 'DELETE' });
+            showMessage('mensaje-servicio', 'Servicio eliminado exitosamente', 'success');
+            cargarServicios();
+        } catch (error) {
+            showMessage('mensaje-servicio', 'Error al eliminar servicio: ' + error.message, 'error');
+        }
+    }
+}
+
+async function eliminarProducto(id) {
+    if (confirm('¿Está seguro de que desea eliminar este producto?')) {
+        try {
+            await apiCall(`/productos/${id}`, { method: 'DELETE' });
+            showMessage('mensaje-producto', 'Producto eliminado exitosamente', 'success');
+            cargarProductos();
+        } catch (error) {
+            showMessage('mensaje-producto', 'Error al eliminar producto: ' + error.message, 'error');
+        }
+    }
+}
+
+async function cancelarCita(id) {
+    if (confirm('¿Está seguro de que desea cancelar esta cita?')) {
+        try {
+            await apiCall(`/citas/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estatus: 'Cancelada' })
             });
-        }, 1000);
-        
-        // Cargar la vista inicial
-        showView('ver-citas');
-    });
+            showMessage('mensaje-cita', 'Cita cancelada exitosamente', 'success');
+            cargarCitas();
+        } catch (error) {
+            showMessage('mensaje-cita', 'Error al cancelar cita: ' + error.message, 'error');
+        }
+    }
+}
+
+// Funciones de edición (placeholder)
+function editarPaciente(id) {
+    alert(`Editar paciente con ID: ${id} - Funcionalidad en desarrollo`);
+}
+
+function editarDentista(id) {
+    alert(`Editar dentista con ID: ${id} - Funcionalidad en desarrollo`);
+}
+
+function editarServicio(id) {
+    alert(`Editar servicio con ID: ${id} - Funcionalidad en desarrollo`);
+}
+
+function editarProducto(id) {
+    alert(`Editar producto con ID: ${id} - Funcionalidad en desarrollo`);
+}
+
+// ==================== INICIALIZACIÓN ====================
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar autenticación
+    if (!checkAuth()) {
+        return;
+    }
+
+    // Establecer fecha actual en el campo de corte de caja
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fecha-corte').value = hoy;
+    
+    // Inicializar fechas por defecto para filtros (últimos 30 días)
+    const fechaFin = new Date().toISOString().split('T')[0];
+    const fechaInicio = new Date();
+    fechaInicio.setDate(fechaInicio.getDate() - 30);
+    document.getElementById('filtro-fecha-inicio').value = fechaInicio.toISOString().split('T')[0];
+    document.getElementById('filtro-fecha-fin').value = fechaFin;
+    
+    // Probar conexión inicial
+    setTimeout(() => {
+        apiCall('/health').then(() => {
+            updateConnectionStatus(true);
+        }).catch(() => {
+            updateConnectionStatus(false);
+        });
+    }, 1000);
+    
+    // Cargar la vista inicial
+    showView('ver-citas');
+});
+// Event listeners para moneda e IVA
+document.getElementById('venta-monto-pagado').addEventListener('input', calcularTotalVenta);
+document.getElementById('iva-toggle').addEventListener('change', toggleIVA); // ✅ Esto arregla el IVA
+document.getElementById('venta-moneda').addEventListener('change', actualizarMoneda);
+document.getElementById('venta-tipo-cambio').addEventListener('input', recalcularPrecios);
 </script>
 </body>
 </html>
