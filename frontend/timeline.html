@@ -121,11 +121,30 @@
             padding: 20px;
         }
 
-        .timeline-grid {
+       .timeline-grid {
     display: grid;
-    grid-template-columns: 180px repeat(24, 50px); /* Reducido de 80px a 50px */
+    grid-template-columns: 160px repeat(24, 60px); /* Un poco más ancho pero no demasiado */
     gap: 1px;
     min-width: max-content;
+}
+
+/* Hacer responsive */
+@media (max-width: 1400px) {
+    .timeline-grid {
+        grid-template-columns: 140px repeat(24, 50px);
+    }
+}
+
+@media (max-width: 1200px) {
+    .timeline-grid {
+        grid-template-columns: 130px repeat(24, 45px);
+    }
+}
+
+@media (max-width: 992px) {
+    .timeline-grid {
+        grid-template-columns: 120px repeat(24, 40px);
+    }
 }
 
         /* Headers de horas */
@@ -156,19 +175,22 @@
             display: contents;
         }
 
-        .dentist-name {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
-            color: white;
-            padding: 20px 15px;
-            font-weight: 600;
-            position: sticky;
-            left: 0;
-            z-index: 5;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
+.dentist-name {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    color: white;
+    padding: 10px 12px;
+    font-weight: 600;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    height: 80px; /* Misma altura que los time-slots */
+    min-height: 80px;
+    font-size: 0.9rem;
+}
 
         .dentist-name i {
             font-size: 1.2rem;
@@ -187,20 +209,21 @@
         }
 
         /* Citas */
-        .appointment {
-            position: absolute;
-            border-radius: 12px;
-            padding: 12px;
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            z-index: 2;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
+       .appointment {
+    position: absolute;
+    border-radius: 8px;
+    padding: 8px;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    z-index: 2;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    height: 70px;
+}
 
         .appointment:hover {
             transform: scale(1.05);
@@ -711,8 +734,8 @@ for (let hour = 0; hour < 24; hour++) {
                     const startMinute = startTime.getMinutes();
                     const durationHours = durationMinutes / 60;
                     
-                    const startPosition = (startMinute / 60) * 50; // 50px por hora (coincide con el nuevo ancho)
-const width = Math.max(durationHours * 50, 40); // Mínimo 40px de ancho
+                  const startPosition = (startMinute / 60) * 60; // 60px por hora (coincide con el nuevo ancho)
+const width = Math.max(durationHours * 60, 50); // Mínimo 50px de ancho
                     
                     // Obtener información del paciente y servicio (igual que dental-system.html)
                     const pacienteNombre = appointment.paciente_id?.nombre || appointment.paciente || 'Paciente';
