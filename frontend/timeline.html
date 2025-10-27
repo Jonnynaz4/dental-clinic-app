@@ -3,510 +3,453 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Citas - Clínica Dental</title>
+    <title>Timeline de Citas Dentales</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-        :root {
-            --brand-primary: #20a8d8;
-            --brand-success: #20c997;
-            --brand-danger: #f86c6b;
-            --brand-warning: #ffc107;
-            --border-radius: 12px;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f7fa;
-            color: #2d3748;
-        }
-
-        .header {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .custom-logo {
-            max-width: 180px;
-            height: auto;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logout-btn {
-            background: var(--brand-danger);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .logout-btn:hover {
-            background: #e04f4f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
         }
 
         .container {
-            display: flex;
-            min-height: calc(100vh - 80px);
-        }
-
-        .sidebar {
-            width: 250px;
-            background: white;
-            padding: 1.5rem 0;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .nav-item {
-            padding: 0.75rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #4a5568;
-        }
-
-        .nav-item.active {
-            background: rgba(32, 168, 216, 0.1);
-            color: var(--brand-primary);
-            border-right: 3px solid var(--brand-primary);
-        }
-
-        .nav-item:hover {
-            background: rgba(32, 168, 216, 0.05);
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: var(--brand-primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #1a8bb1;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2d3748;
-        }
-
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        th {
-            background: #f7fafc;
-            font-weight: 600;
-            color: #4a5568;
-        }
-
-        tr:hover {
-            background: #f7fafc;
-        }
-
-        .status {
-            padding: 0.25rem 0.75rem;
+            max-width: 95vw;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
-        .status-pending {
-            background: rgba(255, 193, 7, 0.1);
-            color: #b38705;
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .status-confirmed {
-            background: rgba(32, 201, 151, 0.1);
-            color: #158765;
-        }
-
-        .status-cancelled {
-            background: rgba(248, 108, 107, 0.1);
-            color: #c53030;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-right: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .edit-btn {
-            color: var(--brand-primary);
-        }
-
-        .delete-btn {
-            color: var(--brand-danger);
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
+        .header::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="teeth" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10 2 L12 6 L8 6 Z" fill="white" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23teeth)"/></svg>');
         }
 
-        .modal-content {
-            background: white;
-            border-radius: var(--border-radius);
-            width: 90%;
-            max-width: 500px;
-            padding: 2rem;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.3s ease;
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
         }
 
-        .modal-header {
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .modal-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #718096;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #4a5568;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            background: #f7fafc;
+        .date-selector input {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
             transition: all 0.3s ease;
         }
 
-        .form-control:focus {
+        .date-selector input:focus {
             outline: none;
-            border-color: var(--brand-primary);
-            box-shadow: 0 0 0 3px rgba(32, 168, 216, 0.1);
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
         }
 
-        .form-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .btn-secondary {
-            background: #718096;
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #4a5568;
-        }
-
-        .message {
-            padding: 0.75rem;
-            margin: 1rem 0;
-            border-radius: 6px;
-            font-size: 0.9rem;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            animation: slideIn 0.3s ease;
+            gap: 8px;
         }
 
-        .message.error {
-            background: #fef2f2;
-            color: var(--brand-danger);
-            border: 1px solid var(--brand-danger);
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .message.success {
-            background: #f0fff4;
-            color: var(--brand-success);
-            border: 1px solid var(--brand-success);
+        .timeline-container {
+            overflow-x: auto;
+            padding: 20px;
         }
 
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 200px repeat(24, 80px);
+            gap: 1px;
+            min-width: max-content;
+        }
+
+        /* Headers de horas */
+        .time-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: sticky;
+            left: 0;
+            z-index: 10;
+        }
+
+        .hour-header {
+            background: #34495e;
+            color: white;
+            padding: 10px 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        /* Filas de dentistas */
+        .dentist-row {
+            display: contents;
+        }
+
+        .dentist-name {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px 15px;
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .dentist-name i {
+            font-size: 1.2rem;
+        }
+
+        .time-slot {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            min-height: 80px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            background: #e9ecef;
+        }
+
+        /* Citas */
+        .appointment {
+            position: absolute;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .appointment:hover {
+            transform: scale(1.05);
+            z-index: 20;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .appointment::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .appointment-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .patient-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .appointment-time {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .appointment-service {
+            font-size: 0.65rem;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Colores para diferentes tipos de citas */
+        .appointment.cleaning {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .appointment.filling {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+        }
+
+        .appointment.extraction {
+            background: linear-gradient(135deg, #e17055, #d63031);
+        }
+
+        .appointment.consultation {
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+        }
+
+        .appointment.orthodontics {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        }
+
+        /* Loading */
         .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--brand-primary);
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="logo-container">
-            <img src="assets/images/logo.png" alt="Dental Clinic Logo" class="custom-logo">
-        </div>
-        <div class="user-info">
-            <span id="user-name">Usuario</span>
-            <button class="logout-btn" id="logout-btn">
-                <i class="ri-logout-box-r-line"></i> Cerrar Sesión
-            </button>
-        </div>
-    </div>
 
-    <div class="container">
-        <div class="sidebar">
-            <div class="nav-item active">
-                <i class="ri-calendar-line"></i>
-                <span>Gestión de Citas</span>
-            </div>
-            <div class="nav-item">
-                <i class="ri-user-line"></i>
-                <span>Pacientes</span>
-            </div>
-            <div class="nav-item">
-                <i class="ri-file-text-line"></i>
-                <span>Reportes</span>
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="page-header">
-                <h1 class="page-title">Gestión de Citas</h1>
-                <button class="btn btn-primary" id="add-appointment-btn">
-                    <i class="ri-add-line"></i> Nueva Cita
-                </button>
-            </div>
-
-            <div id="message-container"></div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Lista de Citas</h2>
-                </div>
-                <div class="table-container">
-                    <table id="appointments-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Paciente</th>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Médico</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="appointments-body">
-                            <!-- Las citas se cargarán aquí dinámicamente -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal para agregar/editar citas -->
-    <div class="modal" id="appointment-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-title">Nueva Cita</h3>
-                <button class="close-btn" id="close-modal">&times;</button>
-            </div>
-            <form id="appointment-form">
-                <input type="hidden" id="appointment-id">
-                <div class="form-group">
-                    <label for="patient-name">Nombre del Paciente</label>
-                    <input type="text" id="patient-name" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="appointment-date">Fecha</label>
-                    <input type="date" id="appointment-date" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="appointment-time">Hora</label>
-                    <input type="time" id="appointment-time" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="doctor">Médico</label>
-                    <select id="doctor" class="form-control" required>
-                        <option value="">Seleccione un médico</option>
-                        <option value="Dr. Juan Pérez">Dr. Juan Pérez</option>
-                        <option value="Dra. María García">Dra. María García</option>
-                        <option value="Dr. Carlos López">Dr. Carlos López</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="status">Estado</label>
-                    <select id="status" class="form-control" required>
-                        <option value="pending">Pendiente</option>
-                        <option value="confirmed">Confirmada</option>
-                        <option value="cancelled">Cancelada</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="save-btn">Guardar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-   <script>
-        const API_BASE_URL = 'https://dental-clinic-app-production.up.railway.app/api';
-
-        // Verificar autenticación
-        function checkAuth() {
-            const token = localStorage.getItem('token');
-            const user = localStorage.getItem('user');
-            
-            if (!token) {
-                window.location.href = 'index.html';
-                return;
+        /* Responsive */
+        @media (max-width: 768px) {
+            .timeline-grid {
+                grid-template-columns: 150px repeat(24, 60px);
             }
             
-            if (user) {
-                const userData = JSON.parse(user);
-                document.getElementById('user-name').textContent = userData.nombre || 'Usuario';
+            .dentist-name {
+                padding: 15px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .appointment {
+                padding: 8px;
+                font-size: 0.7rem;
             }
         }
 
-        // Cargar citas desde la API - CORREGIDO
-        async function loadAppointments() {
+        /* Scrollbar personalizado */
+        .timeline-container::-webkit-scrollbar {
+            height: 12px;
+        }
+
+        .timeline-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a42a0);
+        }
+
+        /* Indicador de hora actual */
+        .current-time {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #ff3838;
+            z-index: 15;
+            box-shadow: 0 0 10px #ff3838;
+        }
+
+        .current-time::before {
+            content: 'Ahora';
+            position: absolute;
+            top: -25px;
+            left: -15px;
+            background: #ff3838;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="ri-calendar-schedule-fill"></i> Timeline de Citas Dentales</h1>
+            <p>Visualización en tiempo real de todas las citas programadas</p>
+        </div>
+
+        <div class="controls">
+            <div class="date-selector">
+                <label for="date-picker"><strong>Fecha:</strong></label>
+                <input type="date" id="date-picker" value="">
+            </div>
+            <button class="refresh-btn" onclick="loadAppointments()">
+                <i class="ri-refresh-line"></i> Actualizar Citas
+            </button>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-grid" id="timeline-grid">
+                <div class="time-header">Dentistas/Horas</div>
+                <!-- Headers de horas 1-24 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración - CORREGIDO para usar la misma API que index.html
+        const API_BASE_URL = 'https://dental-clinic-app-production.up.railway.app/api';
+        let currentAppointments = [];
+
+        // Verificar autenticación - NUEVO
+        function checkAuth() {
             const token = localStorage.getItem('token');
-            const loadingButton = document.getElementById('add-appointment-btn');
-            const originalText = loadingButton.innerHTML;
+            if (!token) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Inicialización - MEJORADA
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkAuth()) return;
+            
+            // Establecer fecha actual por defecto
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date-picker').value = today;
+            
+            // Generar headers de horas
+            generateHourHeaders();
+            
+            // Cargar citas
+            loadAppointments();
+            
+            // Actualizar línea de tiempo actual cada minuto
+            setInterval(updateCurrentTimeLine, 60000);
+            updateCurrentTimeLine();
+        });
+
+        // Generar headers de horas 1-24
+        function generateHourHeaders() {
+            const timelineGrid = document.getElementById('timeline-grid');
+            
+            // Limpiar headers existentes (excepto el primero)
+            const existingHeaders = timelineGrid.querySelectorAll('.hour-header');
+            existingHeaders.forEach(header => header.remove());
+            
+            // Agregar headers de horas
+            for (let hour = 0; hour < 24; hour++) {
+                const hourHeader = document.createElement('div');
+                hourHeader.className = 'hour-header';
+                hourHeader.textContent = `${hour}:00`;
+                hourHeader.style.gridColumn = hour + 2;
+                hourHeader.style.gridRow = 1;
+                timelineGrid.appendChild(hourHeader);
+            }
+        }
+
+        // Cargar citas desde la API - COMPLETAMENTE CORREGIDO
+        async function loadAppointments() {
+            if (!checkAuth()) return;
+            
+            const timelineGrid = document.getElementById('timeline-grid');
+            const selectedDate = document.getElementById('date-picker').value;
+            const token = localStorage.getItem('token');
             
             // Mostrar loading
-            loadingButton.innerHTML = '<div class="loading"></div> Cargando...';
-            loadingButton.disabled = true;
-            
+            timelineGrid.innerHTML = `
+                <div class="time-header">Dentistas/Horas</div>
+                <div class="loading" style="grid-column: 1 / -1; grid-row: 2;">
+                    <div class="loading-spinner"></div>
+                    Cargando citas...
+                </div>
+            `;
+            generateHourHeaders();
+
             try {
+                console.log('Cargando citas para fecha:', selectedDate);
+                
+                // CORREGIDO: Usar el mismo endpoint que timeline.html anterior
                 const response = await fetch(`${API_BASE_URL}/citas`, {
                     method: 'GET',
                     headers: {
@@ -515,321 +458,251 @@
                     }
                 });
 
-                console.log('Response status:', response.status); // Para debug
+                console.log('Response status:', response.status);
                 
                 if (!response.ok) {
-                    // Si la respuesta no es exitosa, intentamos obtener más información del error
                     const errorText = await response.text();
                     console.error('Error response:', errorText);
                     
                     if (response.status === 401) {
-                        throw new Error('No autorizado. Token inválido o expirado.');
-                    } else if (response.status === 404) {
-                        throw new Error('Endpoint no encontrado. Verifique la URL.');
+                        throw new Error('No autorizado. Por favor, inicie sesión nuevamente.');
                     } else {
                         throw new Error(`Error ${response.status}: ${errorText || 'Error al cargar las citas'}`);
                     }
                 }
 
-                const appointments = await response.json();
-                console.log('Citas cargadas:', appointments); // Para debug
+                const allAppointments = await response.json();
+                console.log('Todas las citas cargadas:', allAppointments);
                 
-                displayAppointments(appointments);
+                // Filtrar citas por fecha seleccionada
+                const filteredAppointments = filterAppointmentsByDate(allAppointments, selectedDate);
+                console.log('Citas filtradas:', filteredAppointments);
+                
+                currentAppointments = filteredAppointments;
+                renderTimeline(filteredAppointments);
                 
             } catch (error) {
                 console.error('Error completo:', error);
-                showMessage('Error: ' + error.message, 'error');
-                
-                // Si es error de autorización, redirigir al login
-                if (error.message.includes('No autorizado') || error.message.includes('401')) {
-                    setTimeout(() => {
-                        logout();
-                    }, 2000);
-                }
-            } finally {
-                // Restaurar botón
-                loadingButton.innerHTML = originalText;
-                loadingButton.disabled = false;
+                timelineGrid.innerHTML += `
+                    <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #e74c3c;">
+                        <i class="ri-error-warning-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                        <p>Error al cargar las citas: ${error.message}</p>
+                        <button onclick="loadAppointments()" style="margin-top: 10px; padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            Reintentar
+                        </button>
+                    </div>
+                `;
             }
         }
 
-        // Mostrar citas en la tabla - MEJORADO
-        function displayAppointments(appointments) {
-            const tbody = document.getElementById('appointments-body');
-            tbody.innerHTML = '';
-
-            // Verificar si appointments es un array
+        // Filtrar citas por fecha - NUEVA FUNCIÓN
+        function filterAppointmentsByDate(appointments, selectedDate) {
             if (!Array.isArray(appointments)) {
                 console.error('appointments no es un array:', appointments);
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--brand-danger);">Error: Formato de datos incorrecto</td></tr>';
-                return;
+                return [];
             }
 
-            if (appointments.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay citas registradas</td></tr>';
-                return;
-            }
-
-            appointments.forEach(appointment => {
-                const row = document.createElement('tr');
-                
-                // Formatear fecha y hora - MÁS ROBUSTO
-                let formattedDate = '--/--/----';
-                let formattedTime = '--:--';
+            return appointments.filter(appointment => {
+                if (!appointment.fecha) return false;
                 
                 try {
-                    if (appointment.fecha) {
-                        const date = new Date(appointment.fecha);
-                        if (!isNaN(date.getTime())) {
-                            formattedDate = date.toLocaleDateString('es-ES');
-                        }
-                    }
+                    const appointmentDate = new Date(appointment.fecha);
+                    const selectedDateObj = new Date(selectedDate);
                     
-                    if (appointment.hora) {
-                        formattedTime = appointment.hora;
-                    }
-                } catch (dateError) {
-                    console.error('Error formateando fecha:', dateError);
+                    // Comparar solo año, mes y día
+                    return appointmentDate.toISOString().split('T')[0] === selectedDateObj.toISOString().split('T')[0];
+                } catch (error) {
+                    console.error('Error filtrando cita:', error, appointment);
+                    return false;
+                }
+            });
+        }
+
+        // Renderizar timeline - MEJORADA
+        function renderTimeline(appointments) {
+            const timelineGrid = document.getElementById('timeline-grid');
+            const selectedDate = document.getElementById('date-picker').value;
+            
+            // Limpiar contenido existente (excepto headers)
+            const existingRows = timelineGrid.querySelectorAll('.dentist-row');
+            existingRows.forEach(row => row.remove());
+            
+            // Agrupar citas por médico/dentista
+            const dentistsMap = new Map();
+            
+            appointments.forEach(appointment => {
+                const dentistId = appointment.medico || 'default';
+                const dentistName = appointment.medico || 'Médico General';
+                
+                if (!dentistsMap.has(dentistId)) {
+                    dentistsMap.set(dentistId, {
+                        id: dentistId,
+                        name: dentistName,
+                        appointments: []
+                    });
                 }
                 
-                // Determinar clase de estado - MÁS ROBUSTO
-                let statusClass = 'status-pending';
-                let statusText = 'Pendiente';
-                
-                if (appointment.estado === 'confirmed' || appointment.estado === 'confirmada') {
-                    statusClass = 'status-confirmed';
-                    statusText = 'Confirmada';
-                } else if (appointment.estado === 'cancelled' || appointment.estado === 'cancelada') {
-                    statusClass = 'status-cancelled';
-                    statusText = 'Cancelada';
-                }
-                
-                row.innerHTML = `
-                    <td>${appointment.id || 'N/A'}</td>
-                    <td>${appointment.paciente || appointment.nombrePaciente || 'N/A'}</td>
-                    <td>${formattedDate}</td>
-                    <td>${formattedTime}</td>
-                    <td>${appointment.medico || appointment.doctor || 'N/A'}</td>
-                    <td><span class="status ${statusClass}">${statusText}</span></td>
-                    <td>
-                        <button class="action-btn edit-btn" data-id="${appointment.id}">
-                            <i class="ri-edit-line"></i>
-                        </button>
-                        <button class="action-btn delete-btn" data-id="${appointment.id}">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </td>
+                dentistsMap.get(dentistId).appointments.push(appointment);
+            });
+
+            // Si no hay dentistas, mostrar mensaje
+            if (dentistsMap.size === 0) {
+                timelineGrid.innerHTML += `
+                    <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #666;">
+                        <i class="ri-calendar-blank-line" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <h3>No hay citas programadas para esta fecha</h3>
+                        <p>Selecciona otra fecha o programa nuevas citas</p>
+                    </div>
                 `;
-                
-                tbody.appendChild(row);
-            });
-
-            // Agregar event listeners a los botones de editar y eliminar
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', () => editAppointment(btn.dataset.id));
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', () => deleteAppointment(btn.dataset.id));
-            });
-        }
-
-        // Mostrar mensajes - MEJORADO
-        function showMessage(message, type) {
-            const messageContainer = document.getElementById('message-container');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.innerHTML = `
-                ${type === 'error' ? '<i class="ri-error-warning-line"></i>' : '<i class="ri-checkbox-circle-line"></i>'}
-                ${message}
-            `;
-            
-            messageContainer.innerHTML = '';
-            messageContainer.appendChild(messageDiv);
-            
-            // Auto-ocultar después de 5 segundos
-            setTimeout(() => {
-                if (messageContainer.contains(messageDiv)) {
-                    messageContainer.removeChild(messageDiv);
-                }
-            }, 5000);
-        }
-
-        // Abrir modal para nueva cita
-        function openNewAppointmentModal() {
-            document.getElementById('modal-title').textContent = 'Nueva Cita';
-            document.getElementById('appointment-form').reset();
-            document.getElementById('appointment-id').value = '';
-            document.getElementById('appointment-modal').style.display = 'flex';
-        }
-
-        // Editar cita - MEJORADO
-        async function editAppointment(id) {
-            const token = localStorage.getItem('token');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/citas/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error al cargar la cita');
-                }
-
-                const appointment = await response.json();
-                
-                // Llenar el formulario con los datos de la cita
-                document.getElementById('modal-title').textContent = 'Editar Cita';
-                document.getElementById('appointment-id').value = appointment.id;
-                document.getElementById('patient-name').value = appointment.paciente || appointment.nombrePaciente || '';
-                
-                // Formatear fecha para el input date - MÁS ROBUSTO
-                if (appointment.fecha) {
-                    try {
-                        const date = new Date(appointment.fecha);
-                        if (!isNaN(date.getTime())) {
-                            const formattedDate = date.toISOString().split('T')[0];
-                            document.getElementById('appointment-date').value = formattedDate;
-                        }
-                    } catch (dateError) {
-                        console.error('Error formateando fecha:', dateError);
-                    }
-                }
-                
-                document.getElementById('appointment-time').value = appointment.hora || '';
-                document.getElementById('doctor').value = appointment.medico || appointment.doctor || '';
-                document.getElementById('status').value = appointment.estado || 'pending';
-                
-                document.getElementById('appointment-modal').style.display = 'flex';
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
-        }
-
-        // Eliminar cita - MEJORADO
-        async function deleteAppointment(id) {
-            if (!confirm('¿Está seguro de que desea eliminar esta cita?')) {
                 return;
             }
-            
-            const token = localStorage.getItem('token');
-            
-            try {
-                const response = await fetch(`${API_BASE_URL}/citas/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+
+            // Renderizar filas de dentistas
+            let rowIndex = 2; // Empieza después del header
+            dentistsMap.forEach((dentist, dentistId) => {
+                // Fila del dentista
+                const dentistRow = document.createElement('div');
+                dentistRow.className = 'dentist-row';
+                
+                // Nombre del dentista
+                const dentistNameEl = document.createElement('div');
+                dentistNameEl.className = 'dentist-name';
+                dentistNameEl.innerHTML = `<i class="ri-user-star-fill"></i> ${dentist.name}`;
+                dentistNameEl.style.gridColumn = 1;
+                dentistNameEl.style.gridRow = rowIndex;
+                
+                // Slots de tiempo
+                for (let hour = 0; hour < 24; hour++) {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.style.gridColumn = hour + 2;
+                    timeSlot.style.gridRow = rowIndex;
+                    timeSlot.id = `slot-${dentistId}-${hour}`;
+                    dentistRow.appendChild(timeSlot);
+                }
+                
+                dentistRow.appendChild(dentistNameEl);
+                timelineGrid.appendChild(dentistRow);
+
+                // Renderizar citas para este dentista
+                renderDentistAppointments(dentist, rowIndex);
+                rowIndex++;
+            });
+
+            updateCurrentTimeLine();
+        }
+
+        // Renderizar citas de un dentista específico - MEJORADA
+        function renderDentistAppointments(dentist, rowIndex) {
+            dentist.appointments.forEach(appointment => {
+                try {
+                    const startTime = new Date(appointment.fecha);
+                    if (appointment.hora) {
+                        const [hours, minutes] = appointment.hora.split(':');
+                        startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
                     }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error al eliminar la cita');
+                    
+                    // Asumir duración de 1 hora por defecto
+                    const durationMinutes = 60;
+                    const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
+                    
+                    const startHour = startTime.getHours();
+                    const startMinute = startTime.getMinutes();
+                    const durationHours = durationMinutes / 60;
+                    
+                    // Calcular posición y tamaño
+                    const startPosition = (startMinute / 60) * 80; // 80px por hora
+                    const width = durationHours * 80; // 80px por hora
+                    
+                    // Crear elemento de cita
+                    const appointmentEl = document.createElement('div');
+                    appointmentEl.className = `appointment ${getAppointmentTypeClass(appointment.servicio)}`;
+                    appointmentEl.style.left = `${startPosition}px`;
+                    appointmentEl.style.width = `${width}px`;
+                    appointmentEl.style.height = '70px';
+                    appointmentEl.style.top = '5px';
+                    appointmentEl.style.gridColumn = startHour + 2;
+                    appointmentEl.style.gridRow = rowIndex;
+                    
+                    // Contenido de la cita
+                    appointmentEl.innerHTML = `
+                        <div class="appointment-content">
+                            <div class="patient-name">${appointment.paciente || 'Paciente'}</div>
+                            <div class="appointment-time">${formatTime(startTime)} - ${formatTime(endTime)}</div>
+                            <div class="appointment-service">${appointment.servicio || 'Consulta General'}</div>
+                            <div class="appointment-service">${appointment.descripcion || ''}</div>
+                        </div>
+                    `;
+                    
+                    // Agregar tooltip
+                    appointmentEl.title = `${appointment.paciente || 'Paciente'} - ${appointment.servicio || 'Consulta'}\n${formatTime(startTime)} - ${formatTime(endTime)}\n${appointment.descripcion || ''}`;
+                    
+                    // Encontrar el slot correspondiente y agregar la cita
+                    const slotId = `slot-${dentist.id}-${startHour}`;
+                    const timeSlot = document.getElementById(slotId);
+                    if (timeSlot) {
+                        timeSlot.appendChild(appointmentEl);
+                    }
+                } catch (error) {
+                    console.error('Error renderizando cita:', error, appointment);
                 }
-
-                showMessage('Cita eliminada correctamente', 'success');
-                loadAppointments(); // Recargar la lista
-            } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            }
+            });
         }
 
-        // Guardar cita (crear o actualizar) - MEJORADO
-        async function saveAppointment(e) {
-            e.preventDefault();
+        // Obtener clase CSS según el tipo de servicio - MEJORADA
+        function getAppointmentTypeClass(serviceName) {
+            if (!serviceName) return 'consultation';
             
-            const token = localStorage.getItem('token');
-            const appointmentId = document.getElementById('appointment-id').value;
-            const isEditing = !!appointmentId;
-            const saveButton = document.getElementById('save-btn');
-            const originalText = saveButton.innerHTML;
-            
-            // Mostrar loading
-            saveButton.innerHTML = '<div class="loading"></div> Guardando...';
-            saveButton.disabled = true;
-            
-            const appointmentData = {
-                paciente: document.getElementById('patient-name').value,
-                fecha: document.getElementById('appointment-date').value,
-                hora: document.getElementById('appointment-time').value,
-                medico: document.getElementById('doctor').value,
-                estado: document.getElementById('status').value
-            };
-            
+            const service = serviceName.toLowerCase();
+            if (service.includes('limpieza') || service.includes('limpieza dental') || service.includes('cleaning')) return 'cleaning';
+            if (service.includes('empaste') || service.includes('obturación') || service.includes('filling')) return 'filling';
+            if (service.includes('extracción') || service.includes('exodoncia') || service.includes('extraction')) return 'extraction';
+            if (service.includes('ortodoncia') || service.includes('brackets') || service.includes('orthodontics')) return 'orthodontics';
+            if (service.includes('blanqueamiento') || service.includes('blanqueamiento dental')) return 'cleaning';
+            return 'consultation';
+        }
+
+        // Formatear hora - MEJORADA
+        function formatTime(date) {
             try {
-                const url = isEditing ? 
-                    `${API_BASE_URL}/citas/${appointmentId}` : 
-                    `${API_BASE_URL}/citas`;
-                
-                const method = isEditing ? 'PUT' : 'POST';
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(appointmentData)
+                return date.toLocaleTimeString('es-MX', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    hour12: false 
                 });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Error al ${isEditing ? 'actualizar' : 'crear'} la cita: ${errorText}`);
-                }
-
-                const result = await response.json();
-                
-                showMessage(`Cita ${isEditing ? 'actualizada' : 'creada'} correctamente`, 'success');
-                document.getElementById('appointment-modal').style.display = 'none';
-                loadAppointments(); // Recargar la lista
-                
             } catch (error) {
-                showMessage('Error: ' + error.message, 'error');
-            } finally {
-                // Restaurar botón
-                saveButton.innerHTML = originalText;
-                saveButton.disabled = false;
+                return '--:--';
             }
         }
 
-        // Cerrar sesión
-        function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            window.location.href = 'index.html';
+        // Actualizar línea de tiempo actual
+        function updateCurrentTimeLine() {
+            // Remover línea de tiempo anterior
+            const existingLine = document.querySelector('.current-time');
+            if (existingLine) existingLine.remove();
+            
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            // Solo mostrar si es el día seleccionado
+            const selectedDate = document.getElementById('date-picker').value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (selectedDate === today) {
+                const position = (currentMinute / 60) * 80;
+                const currentTimeLine = document.createElement('div');
+                currentTimeLine.className = 'current-time';
+                currentTimeLine.style.gridColumn = currentHour + 2;
+                currentTimeLine.style.gridRow = '2 / -1';
+                currentTimeLine.style.left = `${position}px`;
+                
+                document.getElementById('timeline-grid').appendChild(currentTimeLine);
+            }
         }
 
-        // Inicialización - MEJORADA
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuth();
-            
-            // Cargar citas después de un breve delay para asegurar que la autenticación esté verificada
-            setTimeout(() => {
-                loadAppointments();
-            }, 100);
-            
-            // Event listeners
-            document.getElementById('add-appointment-btn').addEventListener('click', openNewAppointmentModal);
-            document.getElementById('appointment-form').addEventListener('submit', saveAppointment);
-            document.getElementById('close-modal').addEventListener('click', () => {
-                document.getElementById('appointment-modal').style.display = 'none';
-            });
-            document.getElementById('cancel-btn').addEventListener('click', () => {
-                document.getElementById('appointment-modal').style.display = 'none';
-            });
-            document.getElementById('logout-btn').addEventListener('click', logout);
-            
-            // Cerrar modal al hacer clic fuera del contenido
-            document.getElementById('appointment-modal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('appointment-modal')) {
-                    document.getElementById('appointment-modal').style.display = 'none';
-                }
-            });
-        });
+        // Manejar cambios de fecha
+        document.getElementById('date-picker').addEventListener('change', loadAppointments);
     </script>
 </body>
 </html>
