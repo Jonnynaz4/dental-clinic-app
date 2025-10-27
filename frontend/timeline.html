@@ -348,6 +348,36 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
+
+        /* Mensajes de error y éxito */
+        .message {
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .message.error {
+            background: #fef2f2;
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .message.success {
+            background: #f0fff4;
+            color: #27ae60;
+            border: 1px solid #27ae60;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
     </style>
 </head>
 <body>
@@ -367,6 +397,8 @@
             </button>
         </div>
 
+        <div id="message-container"></div>
+
         <div class="timeline-container">
             <div class="timeline-grid" id="timeline-grid">
                 <div class="time-header">Dentistas/Horas</div>
@@ -376,21 +408,65 @@
     </div>
 
     <script>
-        // Configuración - CORREGIDO para usar la misma API que index.html
+        // Configuración - USANDO LA MISMA ESTRUCTURA QUE dental-system.html
         const API_BASE_URL = 'https://dental-clinic-app-production.up.railway.app/api';
         let currentAppointments = [];
 
-        // Verificar autenticación - NUEVO
+        // Verificar autenticación - IGUAL QUE dental-system.html
         function checkAuth() {
             const token = localStorage.getItem('token');
-            if (!token) {
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
                 window.location.href = 'index.html';
                 return false;
             }
             return true;
         }
 
-        // Inicialización - MEJORADA
+        // Función para hacer requests autenticados - IGUAL QUE dental-system.html
+        async function apiCall(endpoint, options = {}) {
+            if (!checkAuth()) {
+                throw new Error('No autenticado');
+            }
+
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                if (response.status === 401) {
+                    logout();
+                    throw new Error('Sesión expirada');
+                }
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error en API call:', error);
+                throw error;
+            }
+        }
+
+        // Función de logout
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Inicialización
         document.addEventListener('DOMContentLoaded', function() {
             if (!checkAuth()) return;
             
@@ -428,13 +504,12 @@
             }
         }
 
-        // Cargar citas desde la API - COMPLETAMENTE CORREGIDO
+        // Cargar citas desde la API - CORREGIDO BASÁNDOSE EN dental-system.html
         async function loadAppointments() {
             if (!checkAuth()) return;
             
             const timelineGrid = document.getElementById('timeline-grid');
             const selectedDate = document.getElementById('date-picker').value;
-            const token = localStorage.getItem('token');
             
             // Mostrar loading
             timelineGrid.innerHTML = `
@@ -449,33 +524,12 @@
             try {
                 console.log('Cargando citas para fecha:', selectedDate);
                 
-                // CORREGIDO: Usar el mismo endpoint que timeline.html anterior
-                const response = await fetch(`${API_BASE_URL}/citas`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error response:', errorText);
-                    
-                    if (response.status === 401) {
-                        throw new Error('No autorizado. Por favor, inicie sesión nuevamente.');
-                    } else {
-                        throw new Error(`Error ${response.status}: ${errorText || 'Error al cargar las citas'}`);
-                    }
-                }
-
-                const allAppointments = await response.json();
-                console.log('Todas las citas cargadas:', allAppointments);
+                // USANDO EL MISMO ENDPOINT Y MÉTODO QUE dental-system.html
+                const citas = await apiCall('/citas');
+                console.log('Citas recibidas:', citas);
                 
                 // Filtrar citas por fecha seleccionada
-                const filteredAppointments = filterAppointmentsByDate(allAppointments, selectedDate);
+                const filteredAppointments = filterAppointmentsByDate(citas, selectedDate);
                 console.log('Citas filtradas:', filteredAppointments);
                 
                 currentAppointments = filteredAppointments;
@@ -483,6 +537,7 @@
                 
             } catch (error) {
                 console.error('Error completo:', error);
+                showMessage('Error al cargar las citas: ' + error.message, 'error');
                 timelineGrid.innerHTML += `
                     <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #e74c3c;">
                         <i class="ri-error-warning-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
@@ -495,7 +550,7 @@
             }
         }
 
-        // Filtrar citas por fecha - NUEVA FUNCIÓN
+        // Filtrar citas por fecha - MEJORADO
         function filterAppointmentsByDate(appointments, selectedDate) {
             if (!Array.isArray(appointments)) {
                 console.error('appointments no es un array:', appointments);
@@ -503,10 +558,22 @@
             }
 
             return appointments.filter(appointment => {
-                if (!appointment.fecha) return false;
+                if (!appointment.fecha_hora && !appointment.fecha) return false;
                 
                 try {
-                    const appointmentDate = new Date(appointment.fecha);
+                    let appointmentDate;
+                    
+                    // Manejar diferentes formatos de fecha como en dental-system.html
+                    if (appointment.fecha_hora) {
+                        appointmentDate = new Date(appointment.fecha_hora);
+                    } else if (appointment.fecha) {
+                        appointmentDate = new Date(appointment.fecha);
+                    }
+                    
+                    if (!appointmentDate || isNaN(appointmentDate.getTime())) {
+                        return false;
+                    }
+                    
                     const selectedDateObj = new Date(selectedDate);
                     
                     // Comparar solo año, mes y día
@@ -518,7 +585,22 @@
             });
         }
 
-        // Renderizar timeline - MEJORADA
+        // Mostrar mensajes
+        function showMessage(message, type) {
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.innerHTML = `
+                <div class="message ${type}">
+                    ${type === 'error' ? '<i class="ri-error-warning-line"></i>' : '<i class="ri-checkbox-circle-line"></i>'}
+                    ${message}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                messageContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Renderizar timeline - MEJORADO
         function renderTimeline(appointments) {
             const timelineGrid = document.getElementById('timeline-grid');
             const selectedDate = document.getElementById('date-picker').value;
@@ -527,22 +609,23 @@
             const existingRows = timelineGrid.querySelectorAll('.dentist-row');
             existingRows.forEach(row => row.remove());
             
-            // Agrupar citas por médico/dentista
+            // Agrupar citas por médico/dentista - USANDO LA MISMA ESTRUCTURA QUE dental-system.html
             const dentistsMap = new Map();
             
             appointments.forEach(appointment => {
-                const dentistId = appointment.medico || 'default';
-                const dentistName = appointment.medico || 'Médico General';
+                // USAR LA MISMA LÓGICA QUE dental-system.html PARA OBTENER NOMBRES
+                const dentistaId = appointment.dentista_id?._id || 'default';
+                const dentistaNombre = appointment.dentista_id?.nombre || appointment.dentista || 'Médico General';
                 
-                if (!dentistsMap.has(dentistId)) {
-                    dentistsMap.set(dentistId, {
-                        id: dentistId,
-                        name: dentistName,
+                if (!dentistsMap.has(dentistaId)) {
+                    dentistsMap.set(dentistaId, {
+                        id: dentistaId,
+                        name: dentistaNombre,
                         appointments: []
                     });
                 }
                 
-                dentistsMap.get(dentistId).appointments.push(appointment);
+                dentistsMap.get(dentistaId).appointments.push(appointment);
             });
 
             // Si no hay dentistas, mostrar mensaje
@@ -592,18 +675,33 @@
             updateCurrentTimeLine();
         }
 
-        // Renderizar citas de un dentista específico - MEJORADA
+        // Renderizar citas de un dentista específico - CORREGIDO
         function renderDentistAppointments(dentist, rowIndex) {
             dentist.appointments.forEach(appointment => {
                 try {
-                    const startTime = new Date(appointment.fecha);
-                    if (appointment.hora) {
-                        const [hours, minutes] = appointment.hora.split(':');
-                        startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                    let startTime;
+                    
+                    // USAR LA MISMA LÓGICA DE FECHA QUE dental-system.html
+                    if (appointment.fecha_hora) {
+                        startTime = new Date(appointment.fecha_hora);
+                    } else if (appointment.fecha) {
+                        startTime = new Date(appointment.fecha);
+                        // Si hay hora separada, combinarla
+                        if (appointment.hora) {
+                            const [hours, minutes] = appointment.hora.split(':');
+                            startTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+                        }
+                    } else {
+                        return; // No hay fecha, saltar esta cita
                     }
                     
-                    // Asumir duración de 1 hora por defecto
-                    const durationMinutes = 60;
+                    if (isNaN(startTime.getTime())) {
+                        console.error('Fecha inválida:', appointment);
+                        return;
+                    }
+                    
+                    // Asumir duración de 1 hora por defecto (como en dental-system.html)
+                    const durationMinutes = appointment.duracion || 60;
                     const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
                     
                     const startHour = startTime.getHours();
@@ -612,11 +710,15 @@
                     
                     // Calcular posición y tamaño
                     const startPosition = (startMinute / 60) * 80; // 80px por hora
-                    const width = durationHours * 80; // 80px por hora
+                    const width = Math.max(durationHours * 80, 60); // Mínimo 60px de ancho
+                    
+                    // Obtener información del paciente y servicio (igual que dental-system.html)
+                    const pacienteNombre = appointment.paciente_id?.nombre || appointment.paciente || 'Paciente';
+                    const servicioNombre = appointment.servicio_id?.nombre || appointment.servicio || 'Consulta General';
                     
                     // Crear elemento de cita
                     const appointmentEl = document.createElement('div');
-                    appointmentEl.className = `appointment ${getAppointmentTypeClass(appointment.servicio)}`;
+                    appointmentEl.className = `appointment ${getAppointmentTypeClass(servicioNombre)}`;
                     appointmentEl.style.left = `${startPosition}px`;
                     appointmentEl.style.width = `${width}px`;
                     appointmentEl.style.height = '70px';
@@ -627,15 +729,15 @@
                     // Contenido de la cita
                     appointmentEl.innerHTML = `
                         <div class="appointment-content">
-                            <div class="patient-name">${appointment.paciente || 'Paciente'}</div>
+                            <div class="patient-name">${pacienteNombre}</div>
                             <div class="appointment-time">${formatTime(startTime)} - ${formatTime(endTime)}</div>
-                            <div class="appointment-service">${appointment.servicio || 'Consulta General'}</div>
+                            <div class="appointment-service">${servicioNombre}</div>
                             <div class="appointment-service">${appointment.descripcion || ''}</div>
                         </div>
                     `;
                     
-                    // Agregar tooltip
-                    appointmentEl.title = `${appointment.paciente || 'Paciente'} - ${appointment.servicio || 'Consulta'}\n${formatTime(startTime)} - ${formatTime(endTime)}\n${appointment.descripcion || ''}`;
+                    // Agregar tooltip con información completa
+                    appointmentEl.title = `${pacienteNombre} - ${servicioNombre}\n${formatTime(startTime)} - ${formatTime(endTime)}\n${appointment.descripcion || 'Sin descripción'}\nDentista: ${dentist.name}`;
                     
                     // Encontrar el slot correspondiente y agregar la cita
                     const slotId = `slot-${dentist.id}-${startHour}`;
@@ -649,7 +751,7 @@
             });
         }
 
-        // Obtener clase CSS según el tipo de servicio - MEJORADA
+        // Obtener clase CSS según el tipo de servicio
         function getAppointmentTypeClass(serviceName) {
             if (!serviceName) return 'consultation';
             
@@ -662,7 +764,7 @@
             return 'consultation';
         }
 
-        // Formatear hora - MEJORADA
+        // Formatear hora
         function formatTime(date) {
             try {
                 return date.toLocaleTimeString('es-MX', { 
