@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timeline de Citas Dentales</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 95vw;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="teeth" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M10 2 L12 6 L8 6 Z" fill="white" opacity="0.2"/></pattern></defs><rect width="100" height="100" fill="url(%23teeth)"/></svg>');
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .controls {
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .date-selector input {
+            padding: 10px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .date-selector input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .timeline-container {
+            overflow-x: auto;
+            padding: 20px;
+        }
+
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 200px repeat(24, 80px);
+            gap: 1px;
+            min-width: max-content;
+        }
+
+        /* Headers de horas */
+        .time-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: sticky;
+            left: 0;
+            z-index: 10;
+        }
+
+        .hour-header {
+            background: #34495e;
+            color: white;
+            padding: 10px 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        /* Filas de dentistas */
+        .dentist-row {
+            display: contents;
+        }
+
+        .dentist-name {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            color: white;
+            padding: 20px 15px;
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+
+        .dentist-name i {
+            font-size: 1.2rem;
+        }
+
+        .time-slot {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            min-height: 80px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            background: #e9ecef;
+        }
+
+        /* Citas */
+        .appointment {
+            position: absolute;
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            z-index: 2;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .appointment:hover {
+            transform: scale(1.05);
+            z-index: 20;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .appointment::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .appointment-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .patient-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .appointment-time {
+            font-size: 0.7rem;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .appointment-service {
+            font-size: 0.65rem;
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Colores para diferentes tipos de citas */
+        .appointment.cleaning {
+            background: linear-gradient(135deg, #00b894, #00a085);
+        }
+
+        .appointment.filling {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+        }
+
+        .appointment.extraction {
+            background: linear-gradient(135deg, #e17055, #d63031);
+        }
+
+        .appointment.consultation {
+            background: linear-gradient(135deg, #fdcb6e, #f39c12);
+        }
+
+        .appointment.orthodontics {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .timeline-grid {
+                grid-template-columns: 150px repeat(24, 60px);
+            }
+            
+            .dentist-name {
+                padding: 15px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .appointment {
+                padding: 8px;
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Scrollbar personalizado */
+        .timeline-container::-webkit-scrollbar {
+            height: 12px;
+        }
+
+        .timeline-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a6fd8, #6a42a0);
+        }
+
+        /* Indicador de hora actual */
+        .current-time {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #ff3838;
+            z-index: 15;
+            box-shadow: 0 0 10px #ff3838;
+        }
+
+        .current-time::before {
+            content: 'Ahora';
+            position: absolute;
+            top: -25px;
+            left: -15px;
+            background: #ff3838;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="ri-calendar-schedule-fill"></i> Timeline de Citas Dentales</h1>
+            <p>Visualización en tiempo real de todas las citas programadas</p>
+        </div>
+
+        <div class="controls">
+            <div class="date-selector">
+                <label for="date-picker"><strong>Fecha:</strong></label>
+                <input type="date" id="date-picker" value="">
+            </div>
+            <button class="refresh-btn" onclick="loadAppointments()">
+                <i class="ri-refresh-line"></i> Actualizar Citas
+            </button>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-grid" id="timeline-grid">
+                <div class="time-header">Dentistas/Horas</div>
+                <!-- Headers de horas 1-24 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuración
+        const API_BASE_URL = 'https://dental-clinic-app-production.up.railway.app/api';
+        let currentAppointments = [];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Establecer fecha actual por defecto
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date-picker').value = today;
+            
+            // Generar headers de horas
+            generateHourHeaders();
+            
+            // Cargar citas
+            loadAppointments();
+            
+            // Actualizar línea de tiempo actual cada minuto
+            setInterval(updateCurrentTimeLine, 60000);
+            updateCurrentTimeLine();
+        });
+
+        // Generar headers de horas 1-24
+        function generateHourHeaders() {
+            const timelineGrid = document.getElementById('timeline-grid');
+            
+            // Limpiar headers existentes (excepto el primero)
+            const existingHeaders = timelineGrid.querySelectorAll('.hour-header');
+            existingHeaders.forEach(header => header.remove());
+            
+            // Agregar headers de horas
+            for (let hour = 0; hour < 24; hour++) {
+                const hourHeader = document.createElement('div');
+                hourHeader.className = 'hour-header';
+                hourHeader.textContent = hour;
+                hourHeader.style.gridColumn = hour + 2;
+                hourHeader.style.gridRow = 1;
+                timelineGrid.appendChild(hourHeader);
+            }
+        }
+
+        // Cargar citas desde la API
+        async function loadAppointments() {
+            const timelineGrid = document.getElementById('timeline-grid');
+            const selectedDate = document.getElementById('date-picker').value;
+            
+            // Mostrar loading
+            timelineGrid.innerHTML = `
+                <div class="time-header">Dentistas/Horas</div>
+                <div class="loading" style="grid-column: 1 / -1; grid-row: 2;">
+                    <div class="loading-spinner"></div>
+                    Cargando citas...
+                </div>
+            `;
+            generateHourHeaders();
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/appointments?date=${selectedDate}`);
+                if (!response.ok) throw new Error('Error al cargar citas');
+                
+                const appointments = await response.json();
+                currentAppointments = appointments;
+                renderTimeline(appointments);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                timelineGrid.innerHTML += `
+                    <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #e74c3c;">
+                        <i class="ri-error-warning-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                        <p>Error al cargar las citas: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Renderizar timeline
+        function renderTimeline(appointments) {
+            const timelineGrid = document.getElementById('timeline-grid');
+            const selectedDate = document.getElementById('date-picker').value;
+            
+            // Limpiar contenido existente (excepto headers)
+            const existingRows = timelineGrid.querySelectorAll('.dentist-row');
+            existingRows.forEach(row => row.remove());
+            
+            // Agrupar citas por dentista
+            const dentistsMap = new Map();
+            
+            appointments.forEach(appointment => {
+                const dentistId = appointment.dentista_id?._id || appointment.dentista_id;
+                const dentistName = appointment.dentista_id?.nombre || 'Dentista No Asignado';
+                
+                if (!dentistsMap.has(dentistId)) {
+                    dentistsMap.set(dentistId, {
+                        id: dentistId,
+                        name: dentistName,
+                        appointments: []
+                    });
+                }
+                
+                dentistsMap.get(dentistId).appointments.push(appointment);
+            });
+
+            // Si no hay dentistas, mostrar mensaje
+            if (dentistsMap.size === 0) {
+                timelineGrid.innerHTML += `
+                    <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #666;">
+                        <i class="ri-calendar-blank-line" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                        <h3>No hay citas programadas para esta fecha</h3>
+                        <p>Selecciona otra fecha o programa nuevas citas</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Renderizar filas de dentistas
+            let rowIndex = 2; // Empieza después del header
+            dentistsMap.forEach((dentist, dentistId) => {
+                // Fila del dentista
+                const dentistRow = document.createElement('div');
+                dentistRow.className = 'dentist-row';
+                
+                // Nombre del dentista
+                const dentistNameEl = document.createElement('div');
+                dentistNameEl.className = 'dentist-name';
+                dentistNameEl.innerHTML = `<i class="ri-user-star-fill"></i> ${dentist.name}`;
+                dentistNameEl.style.gridColumn = 1;
+                dentistNameEl.style.gridRow = rowIndex;
+                
+                // Slots de tiempo
+                for (let hour = 0; hour < 24; hour++) {
+                    const timeSlot = document.createElement('div');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.style.gridColumn = hour + 2;
+                    timeSlot.style.gridRow = rowIndex;
+                    timeSlot.id = `slot-${dentistId}-${hour}`;
+                    dentistRow.appendChild(timeSlot);
+                }
+                
+                dentistRow.appendChild(dentistNameEl);
+                timelineGrid.appendChild(dentistRow);
+
+                // Renderizar citas para este dentista
+                renderDentistAppointments(dentist, rowIndex);
+                rowIndex++;
+            });
+
+            updateCurrentTimeLine();
+        }
+
+        // Renderizar citas de un dentista específico
+        function renderDentistAppointments(dentist, rowIndex) {
+            dentist.appointments.forEach(appointment => {
+                const startTime = new Date(appointment.fecha_hora);
+                const endTime = new Date(startTime.getTime() + appointment.duracion * 60000);
+                
+                const startHour = startTime.getHours();
+                const startMinute = startTime.getMinutes();
+                const durationHours = appointment.duracion / 60;
+                
+                // Calcular posición y tamaño
+                const startPosition = (startMinute / 60) * 80; // 80px por hora
+                const width = durationHours * 80; // 80px por hora
+                
+                // Crear elemento de cita
+                const appointmentEl = document.createElement('div');
+                appointmentEl.className = `appointment ${getAppointmentTypeClass(appointment.servicio_id?.nombre)}`;
+                appointmentEl.style.left = `${startPosition}px`;
+                appointmentEl.style.width = `${width}px`;
+                appointmentEl.style.height = '70px';
+                appointmentEl.style.top = '5px';
+                appointmentEl.style.gridColumn = startHour + 2;
+                appointmentEl.style.gridRow = rowIndex;
+                
+                // Contenido de la cita
+                appointmentEl.innerHTML = `
+                    <div class="appointment-content">
+                        <div class="patient-name">${appointment.paciente_id?.nombre || 'Paciente'}</div>
+                        <div class="appointment-time">${formatTime(startTime)} - ${formatTime(endTime)}</div>
+                        <div class="appointment-service">${appointment.servicio_id?.nombre || 'Consulta'}</div>
+                        <div class="appointment-service">${appointment.descripcion || ''}</div>
+                    </div>
+                `;
+                
+                // Agregar tooltip
+                appointmentEl.title = `${appointment.paciente_id?.nombre || 'Paciente'} - ${appointment.servicio_id?.nombre || 'Consulta'}\n${formatTime(startTime)} - ${formatTime(endTime)}\n${appointment.descripcion || ''}`;
+                
+                // Encontrar el slot correspondiente y agregar la cita
+                const slotId = `slot-${dentist.id}-${startHour}`;
+                const timeSlot = document.getElementById(slotId);
+                if (timeSlot) {
+                    timeSlot.appendChild(appointmentEl);
+                }
+            });
+        }
+
+        // Obtener clase CSS según el tipo de servicio
+        function getAppointmentTypeClass(serviceName) {
+            if (!serviceName) return 'consultation';
+            
+            const service = serviceName.toLowerCase();
+            if (service.includes('limpieza') || service.includes('cleaning')) return 'cleaning';
+            if (service.includes('empaste') || service.includes('filling')) return 'filling';
+            if (service.includes('extracción') || service.includes('extraction')) return 'extraction';
+            if (service.includes('ortodoncia') || service.includes('orthodontics')) return 'orthodontics';
+            return 'consultation';
+        }
+
+        // Formatear hora
+        function formatTime(date) {
+            return date.toLocaleTimeString('es-MX', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+        }
+
+        // Actualizar línea de tiempo actual
+        function updateCurrentTimeLine() {
+            // Remover línea de tiempo anterior
+            const existingLine = document.querySelector('.current-time');
+            if (existingLine) existingLine.remove();
+            
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            // Solo mostrar si es el día seleccionado
+            const selectedDate = document.getElementById('date-picker').value;
+            const today = new Date().toISOString().split('T')[0];
+            
+            if (selectedDate === today) {
+                const position = (currentMinute / 60) * 80;
+                const currentTimeLine = document.createElement('div');
+                currentTimeLine.className = 'current-time';
+                currentTimeLine.style.gridColumn = currentHour + 2;
+                currentTimeLine.style.gridRow = '2 / -1';
+                currentTimeLine.style.left = `${position}px`;
+                
+                document.getElementById('timeline-grid').appendChild(currentTimeLine);
+            }
+        }
+
+        // Manejar cambios de fecha
+        document.getElementById('date-picker').addEventListener('change', loadAppointments);
+    </script>
+</body>
+</html>
