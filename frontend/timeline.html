@@ -20,15 +20,15 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 95vw;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
+     .container {
+    max-width: 98vw; /* Más ancho */
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
 
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
@@ -528,50 +528,59 @@ for (let hour = 0; hour < 24; hour++) {
         }
 
         // Cargar citas desde la API - CORREGIDO BASÁNDOSE EN dental-system.html
-        async function loadAppointments() {
-            if (!checkAuth()) return;
-            
-            const timelineGrid = document.getElementById('timeline-grid');
-            const selectedDate = document.getElementById('date-picker').value;
-            
-            // Mostrar loading
-            timelineGrid.innerHTML = `
-                <div class="time-header">Dentistas/Horas</div>
-                <div class="loading" style="grid-column: 1 / -1; grid-row: 2;">
-                    <div class="loading-spinner"></div>
-                    Cargando citas...
-                </div>
-            `;
-            generateHourHeaders();
+async function loadAppointments() {
+    if (!checkAuth()) return;
+    
+    const timelineGrid = document.getElementById('timeline-grid');
+    const selectedDate = document.getElementById('date-picker').value;
+    
+    // Mostrar loading
+    timelineGrid.innerHTML = `
+        <div class="time-header">Dentistas/Horas</div>
+        <div class="loading" style="grid-column: 1 / -1; grid-row: 2; display: none;" id="loading-indicator">
+            <div class="loading-spinner"></div>
+            Cargando citas...
+        </div>
+    `;
+    generateHourHeaders();
 
-            try {
-                console.log('Cargando citas para fecha:', selectedDate);
-                
-                // USANDO EL MISMO ENDPOINT Y MÉTODO QUE dental-system.html
-                const citas = await apiCall('/citas');
-                console.log('Citas recibidas:', citas);
-                
-                // Filtrar citas por fecha seleccionada
-                const filteredAppointments = filterAppointmentsByDate(citas, selectedDate);
-                console.log('Citas filtradas:', filteredAppointments);
-                
-                currentAppointments = filteredAppointments;
-                renderTimeline(filteredAppointments);
-                
-            } catch (error) {
-                console.error('Error completo:', error);
-                showMessage('Error al cargar las citas: ' + error.message, 'error');
-                timelineGrid.innerHTML += `
-                    <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #e74c3c;">
-                        <i class="ri-error-warning-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                        <p>Error al cargar las citas: ${error.message}</p>
-                        <button onclick="loadAppointments()" style="margin-top: 10px; padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                            Reintentar
-                        </button>
-                    </div>
-                `;
-            }
+    // Mostrar el loading
+    document.getElementById('loading-indicator').style.display = 'block';
+
+    try {
+        console.log('Cargando citas para fecha:', selectedDate);
+        
+        // USANDO EL MISMO ENDPOINT Y MÉTODO QUE dental-system.html
+        const citas = await apiCall('/citas');
+        console.log('Citas recibidas:', citas);
+        
+        // Filtrar citas por fecha seleccionada
+        const filteredAppointments = filterAppointmentsByDate(citas, selectedDate);
+        console.log('Citas filtradas:', filteredAppointments);
+        
+        currentAppointments = filteredAppointments;
+        renderTimeline(filteredAppointments);
+        
+    } catch (error) {
+        console.error('Error completo:', error);
+        showMessage('Error al cargar las citas: ' + error.message, 'error');
+        timelineGrid.innerHTML += `
+            <div style="grid-column: 1 / -1; grid-row: 2; text-align: center; padding: 40px; color: #e74c3c;">
+                <i class="ri-error-warning-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>Error al cargar las citas: ${error.message}</p>
+                <button onclick="loadAppointments()" style="margin-top: 10px; padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Reintentar
+                </button>
+            </div>
+        `;
+    } finally {
+        // Ocultar loading
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = 'none';
         }
+    }
+}
 
         // Filtrar citas por fecha - MEJORADO
         function filterAppointmentsByDate(appointments, selectedDate) {
@@ -734,8 +743,8 @@ for (let hour = 0; hour < 24; hour++) {
                     const startMinute = startTime.getMinutes();
                     const durationHours = durationMinutes / 60;
                     
-                  const startPosition = (startMinute / 60) * 60; // 60px por hora (coincide con el nuevo ancho)
-const width = Math.max(durationHours * 60, 50); // Mínimo 50px de ancho
+                  const startPosition = (startMinute / 60) * 80; // 80px por hora
+const width = Math.max(durationHours * 80, 60); // Mínimo 60px de ancho
                     
                     // Obtener información del paciente y servicio (igual que dental-system.html)
                     const pacienteNombre = appointment.paciente_id?.nombre || appointment.paciente || 'Paciente';
