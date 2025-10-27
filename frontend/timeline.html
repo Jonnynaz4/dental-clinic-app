@@ -122,11 +122,11 @@
         }
 
         .timeline-grid {
-            display: grid;
-            grid-template-columns: 200px repeat(24, 80px);
-            gap: 1px;
-            min-width: max-content;
-        }
+    display: grid;
+    grid-template-columns: 180px repeat(24, 50px); /* Reducido de 80px a 50px */
+    gap: 1px;
+    min-width: max-content;
+}
 
         /* Headers de horas */
         .time-header {
@@ -494,14 +494,14 @@
             existingHeaders.forEach(header => header.remove());
             
             // Agregar headers de horas
-            for (let hour = 0; hour < 24; hour++) {
-                const hourHeader = document.createElement('div');
-                hourHeader.className = 'hour-header';
-                hourHeader.textContent = `${hour}:00`;
-                hourHeader.style.gridColumn = hour + 2;
-                hourHeader.style.gridRow = 1;
-                timelineGrid.appendChild(hourHeader);
-            }
+for (let hour = 0; hour < 24; hour++) {
+    const hourHeader = document.createElement('div');
+    hourHeader.className = 'hour-header';
+    hourHeader.textContent = `${hour}`; // Solo el número, sin ":00"
+    hourHeader.style.gridColumn = hour + 2;
+    hourHeader.style.gridRow = 1;
+    timelineGrid.appendChild(hourHeader);
+}
         }
 
         // Cargar citas desde la API - CORREGIDO BASÁNDOSE EN dental-system.html
@@ -654,15 +654,18 @@
                 dentistNameEl.style.gridColumn = 1;
                 dentistNameEl.style.gridRow = rowIndex;
                 
-                // Slots de tiempo
-                for (let hour = 0; hour < 24; hour++) {
-                    const timeSlot = document.createElement('div');
-                    timeSlot.className = 'time-slot';
-                    timeSlot.style.gridColumn = hour + 2;
-                    timeSlot.style.gridRow = rowIndex;
-                    timeSlot.id = `slot-${dentistId}-${hour}`;
-                    dentistRow.appendChild(timeSlot);
-                }
+               // Slots de tiempo
+for (let hour = 0; hour < 24; hour++) {
+    const timeSlot = document.createElement('div');
+    timeSlot.className = 'time-slot';
+    timeSlot.style.gridColumn = hour + 2;
+    timeSlot.style.gridRow = rowIndex;
+    timeSlot.id = `slot-${dentistId}-${hour}`;
+    // Asegurar altura consistente
+    timeSlot.style.minHeight = '80px';
+    timeSlot.style.height = '80px';
+    dentistRow.appendChild(timeSlot);
+}
                 
                 dentistRow.appendChild(dentistNameEl);
                 timelineGrid.appendChild(dentistRow);
@@ -708,9 +711,8 @@
                     const startMinute = startTime.getMinutes();
                     const durationHours = durationMinutes / 60;
                     
-                    // Calcular posición y tamaño
-                    const startPosition = (startMinute / 60) * 80; // 80px por hora
-                    const width = Math.max(durationHours * 80, 60); // Mínimo 60px de ancho
+                    const startPosition = (startMinute / 60) * 50; // 50px por hora (coincide con el nuevo ancho)
+const width = Math.max(durationHours * 50, 40); // Mínimo 40px de ancho
                     
                     // Obtener información del paciente y servicio (igual que dental-system.html)
                     const pacienteNombre = appointment.paciente_id?.nombre || appointment.paciente || 'Paciente';
