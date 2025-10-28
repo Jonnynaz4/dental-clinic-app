@@ -3447,7 +3447,18 @@ function renderTimelineCitas(appointments, selectedDate) {
         // Renderizar citas para este dentista
         dentist.appointments.forEach(appointment => {
             try {
-                let startTime = appointment.fecha_hora ? new Date(appointment.fecha_hora) : new Date(appointment.fecha);
+                                let startTime;
+                if (appointment.fecha_hora) {
+                    // Si la fecha ya incluye información de zona horaria, usarla directamente
+                    if (appointment.fecha_hora.includes('Z') || appointment.fecha_hora.includes('+')) {
+                        startTime = new Date(appointment.fecha_hora);
+                    } else {
+                        // Si no, asumir que está en UTC y agregar 'Z'
+                        startTime = new Date(appointment.fecha_hora + 'Z');
+                    }
+                } else if (appointment.fecha) {
+                    startTime = new Date(appointment.fecha + 'T00:00:00Z');
+                }
                 if (isNaN(startTime.getTime())) return;
                 
                 const durationMinutes = appointment.duracion || 60;
@@ -3510,7 +3521,9 @@ function getAppointmentTypeClass(serviceName) {
 
 function formatTime(date) {
     try {
-        return date.toLocaleTimeString('es-MX', { 
+        // Ajustar por diferencia de zona horaria
+        const adjustedDate = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+        return adjustedDate.toLocaleTimeString('es-MX', { 
             hour: '2-digit', 
             minute: '2-digit',
             hour12: false 
