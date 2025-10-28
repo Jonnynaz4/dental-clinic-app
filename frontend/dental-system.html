@@ -3339,18 +3339,12 @@ function editarProducto(id) {
 async function cargarTimelineCitas() {
     const timelineContainer = document.getElementById('timeline-grid-container');
     
-    // Establecer fecha actual por defecto SIEMPRE al cargar
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('timeline-date-picker').value = today;
-    const selectedDate = today;
-    
-    // Mostrar loading
-    timelineContainer.innerHTML = `
-        <div style="text-align: center; padding: 40px; color: #666;">
-            <div class="loading"></div>
-            <p>Cargando timeline de citas...</p>
-        </div>
-    `;
+    // Obtener la fecha seleccionada o usar la actual por defecto
+    let selectedDate = document.getElementById('timeline-date-picker').value;
+    if (!selectedDate) {
+        selectedDate = new Date().toISOString().split('T')[0];
+        document.getElementById('timeline-date-picker').value = selectedDate;
+    }
 
     try {
         const citas = await apiCall('/citas');
