@@ -708,20 +708,26 @@
         <div class="sidebar-content">
             <ul class="menu">
                 <div class="menu-section">
-                    <div class="menu-section-title">GESTIÓN PRINCIPAL</div>
-                    <li class="menu-item">
-                        <a href="#" onclick="showView('nueva-cita')">
-                            <div class="menu-icon"><i class="ri-calendar-2-fill"></i></div>
-                            <div class="menu-title">Nueva Cita</div>
-                        </a>
-                    </li>
-                    <li class="menu-item active">
-                        <a href="#" onclick="showView('ver-citas')">
-                            <div class="menu-icon"><i class="ri-time-fill"></i></div>
-                            <div class="menu-title">Ver Citas</div>
-                        </a>
-                    </li>
-                </div>
+    <div class="menu-section-title">GESTIÓN PRINCIPAL</div>
+    <li class="menu-item active">
+    <a href="#" onclick="showView('timeline-citas')">
+            <div class="menu-icon"><i class="ri-calendar-schedule-fill"></i></div>
+            <div class="menu-title">Timeline Citas</div>
+        </a>
+    </li>
+    <li class="menu-item">
+        <a href="#" onclick="showView('nueva-cita')">
+            <div class="menu-icon"><i class="ri-calendar-2-fill"></i></div>
+            <div class="menu-title">Nueva Cita</div>
+        </a>
+    </li>
+    <li class="menu-item">
+        <a href="#" onclick="showView('ver-citas')">
+            <div class="menu-icon"><i class="ri-time-fill"></i></div>
+            <div class="menu-title">Ver Citas</div>
+        </a>
+    </li>
+</div>
                 
                 <div class="menu-section">
                     <div class="menu-section-title">PACIENTES Y PERSONAL</div>
@@ -871,6 +877,35 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Timeline de Citas -->
+<div id="timeline-citas" class="view active">
+    <h1><i class="ri-calendar-schedule-fill"></i> Timeline de Citas</h1>
+    
+    <div class="controls" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <label for="timeline-date-picker" style="font-weight: 600;">Fecha:</label>
+                <input type="date" id="timeline-date-picker" style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;">
+            </div>
+            <button onclick="cargarTimelineCitas()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                <i class="ri-refresh-line"></i> Actualizar Citas
+            </button>
+        </div>
+    </div>
+
+    <div id="timeline-message-container"></div>
+
+    <div style="overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <div id="timeline-grid-container">
+            <!-- Aquí se cargará el timeline dinámicamente -->
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <div class="loading"></div>
+                <p>Cargando timeline de citas...</p>
+            </div>
+        </div>
+    </div>
+</div>
 
             <!-- Gestionar Pacientes -->
             <div id="pacientes" class="view">
@@ -3295,6 +3330,193 @@ function editarProducto(id) {
     alert(`Editar producto con ID: ${id} - Funcionalidad en desarrollo`);
 }
 
+
+// ==================== TIMELINE DE CITAS ====================
+
+async function cargarTimelineCitas() {
+    const timelineContainer = document.getElementById('timeline-grid-container');
+    const selectedDate = document.getElementById('timeline-date-picker').value || new Date().toISOString().split('T')[0];
+    
+    // Mostrar loading
+    timelineContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #666;">
+            <div class="loading"></div>
+            <p>Cargando timeline de citas...</p>
+        </div>
+    `;
+
+    try {
+        const citas = await apiCall('/citas');
+        const filteredAppointments = filterAppointmentsByDate(citas, selectedDate);
+        renderTimelineCitas(filteredAppointments, selectedDate);
+        
+    } catch (error) {
+        console.error('Error cargando timeline:', error);
+        timelineContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                <i class="ri-error-warning-fill" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                <p>Error al cargar el timeline: ${error.message}</p>
+                <button onclick="cargarTimelineCitas()" style="margin-top: 10px; padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+function filterAppointmentsByDate(appointments, selectedDate) {
+    if (!Array.isArray(appointments)) return [];
+    
+    return appointments.filter(appointment => {
+        if (!appointment.fecha_hora && !appointment.fecha) return false;
+        
+        try {
+            let appointmentDate;
+            if (appointment.fecha_hora) {
+                appointmentDate = new Date(appointment.fecha_hora);
+            } else if (appointment.fecha) {
+                appointmentDate = new Date(appointment.fecha);
+            }
+            
+            if (!appointmentDate || isNaN(appointmentDate.getTime())) return false;
+            
+            const selectedDateObj = new Date(selectedDate);
+            return appointmentDate.toISOString().split('T')[0] === selectedDateObj.toISOString().split('T')[0];
+        } catch (error) {
+            console.error('Error filtrando cita:', error);
+            return false;
+        }
+    });
+}
+
+function renderTimelineCitas(appointments, selectedDate) {
+    const timelineContainer = document.getElementById('timeline-grid-container');
+    
+    if (appointments.length === 0) {
+        timelineContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #666;">
+                <i class="ri-calendar-blank-line" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+                <h3>No hay citas programadas para esta fecha</h3>
+                <p>Selecciona otra fecha o programa nuevas citas</p>
+            </div>
+        `;
+        return;
+    }
+
+    // Agrupar citas por dentista
+    const dentistsMap = new Map();
+    appointments.forEach(appointment => {
+        const dentistaId = appointment.dentista_id?._id || 'default';
+        const dentistaNombre = appointment.dentista_id?.nombre || appointment.dentista || 'Médico General';
+        
+        if (!dentistsMap.has(dentistaId)) {
+            dentistsMap.set(dentistaId, {
+                id: dentistaId,
+                name: dentistaNombre,
+                appointments: []
+            });
+        }
+        dentistsMap.get(dentistaId).appointments.push(appointment);
+    });
+
+    // Generar HTML del timeline
+    let timelineHTML = `
+        <div style="display: grid; grid-template-columns: 200px repeat(24, 1fr); gap: 1px; background: #e9ecef; padding: 1px; min-width: max-content;">
+            <div style="background: #2c3e50; color: white; padding: 15px; text-align: center; font-weight: 600; position: sticky; left: 0; z-index: 10;">Dentistas/Horas</div>
+    `;
+
+    // Headers de horas
+    for (let hour = 0; hour < 24; hour++) {
+        timelineHTML += `<div style="background: #34495e; color: white; padding: 10px; text-align: center; font-weight: 600; font-size: 0.9rem;">${hour}</div>`;
+    }
+
+    // Filas de dentistas
+    dentistsMap.forEach((dentist, dentistId) => {
+        timelineHTML += `
+            <div style="background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; padding: 15px; font-weight: 600; position: sticky; left: 0; z-index: 5; display: flex; align-items: center; gap: 8px;">
+                <i class="ri-user-star-fill"></i> ${dentist.name}
+            </div>
+        `;
+
+        // Slots de tiempo
+        for (let hour = 0; hour < 24; hour++) {
+            timelineHTML += `<div style="background: #f8f9fa; min-height: 80px; border: 1px solid #e9ecef; position: relative;" id="slot-${dentistId}-${hour}"></div>`;
+        }
+
+        // Renderizar citas para este dentista
+        dentist.appointments.forEach(appointment => {
+            try {
+                let startTime = appointment.fecha_hora ? new Date(appointment.fecha_hora) : new Date(appointment.fecha);
+                if (isNaN(startTime.getTime())) return;
+                
+                const durationMinutes = appointment.duracion || 60;
+                const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
+                
+                const startHour = startTime.getHours();
+                const startMinute = startTime.getMinutes();
+                const durationHours = durationMinutes / 60;
+                
+                const startPosition = (startMinute / 60) * 100;
+                const width = Math.max(durationHours * 100, 80);
+                
+                const pacienteNombre = appointment.paciente_id?.nombre || appointment.paciente || 'Paciente';
+                const servicioNombre = appointment.servicio_id?.nombre || appointment.servicio || 'Consulta';
+                
+                const appointmentType = getAppointmentTypeClass(servicioNombre);
+                const colors = {
+                    'cleaning': 'linear-gradient(135deg, #00b894, #00a085)',
+                    'filling': 'linear-gradient(135deg, #fd79a8, #e84393)',
+                    'extraction': 'linear-gradient(135deg, #e17055, #d63031)',
+                    'consultation': 'linear-gradient(135deg, #fdcb6e, #f39c12)',
+                    'orthodontics': 'linear-gradient(135deg, #6c5ce7, #a29bfe)'
+                };
+                
+                const appointmentHTML = `
+                    <div style="position: absolute; left: ${startPosition}%; width: ${width}%; height: 70px; top: 5px; background: ${colors[appointmentType] || colors.consultation}; color: white; border-radius: 6px; padding: 8px; font-size: 0.7rem; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.2); cursor: pointer; overflow: hidden; border: 2px solid rgba(255,255,255,0.3);">
+                        <div style="position: relative; z-index: 1;">
+                            <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${pacienteNombre}</div>
+                            <div style="font-size: 0.65rem; opacity: 0.9; margin-bottom: 2px;">${formatTime(startTime)} - ${formatTime(endTime)}</div>
+                            <div style="font-size: 0.6rem; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${servicioNombre}</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Insertar en el slot correspondiente
+                const slotId = `slot-${dentistId}-${startHour}`;
+                timelineHTML = timelineHTML.replace(`id="${slotId}"></div>`, `id="${slotId}">${appointmentHTML}</div>`);
+                
+            } catch (error) {
+                console.error('Error renderizando cita:', error);
+            }
+        });
+    });
+
+    timelineHTML += `</div>`;
+    timelineContainer.innerHTML = timelineHTML;
+}
+
+function getAppointmentTypeClass(serviceName) {
+    if (!serviceName) return 'consultation';
+    const service = serviceName.toLowerCase();
+    if (service.includes('limpieza') || service.includes('cleaning')) return 'cleaning';
+    if (service.includes('empaste') || service.includes('filling')) return 'filling';
+    if (service.includes('extracción') || service.includes('extraction')) return 'extraction';
+    if (service.includes('ortodoncia') || service.includes('orthodontics')) return 'orthodontics';
+    return 'consultation';
+}
+
+function formatTime(date) {
+    try {
+        return date.toLocaleTimeString('es-MX', { 
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false 
+        });
+    } catch (error) {
+        return '--:--';
+    }
+}
+
 // ==================== INICIALIZACIÓN ====================
 document.addEventListener('DOMContentLoaded', function() {
     // Verificar autenticación
@@ -3322,14 +3544,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, 1000);
     
-    // Cargar la vista inicial
-    showView('ver-citas');
+   // Cargar la vista inicial
+showView('timeline-citas');
 });
 // Event listeners para moneda e IVA
 document.getElementById('venta-monto-pagado').addEventListener('input', calcularTotalVenta);
 document.getElementById('iva-toggle').addEventListener('change', toggleIVA); // ✅ Esto arregla el IVA
 document.getElementById('venta-moneda').addEventListener('change', actualizarMoneda);
 document.getElementById('venta-tipo-cambio').addEventListener('input', recalcularPrecios);
+// Event listener para el selector de fecha del timeline
+document.addEventListener('DOMContentLoaded', function() {
+    // Este se ejecutará cuando el DOM esté listo
+    const datePicker = document.getElementById('timeline-date-picker');
+    if (datePicker) {
+        datePicker.addEventListener('change', cargarTimelineCitas);
+    }
+});
 </script>
 </body>
 </html>
