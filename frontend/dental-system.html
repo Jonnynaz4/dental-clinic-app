@@ -1830,6 +1830,9 @@ function showView(viewId) {
     
     // Cargar datos específicos según la vista
     switch(viewId) {
+        case 'timeline-citas':
+            cargarTimelineCitas();
+            break;
         case 'ver-citas':
             cargarCitas();
             break;
@@ -3335,13 +3338,11 @@ function editarProducto(id) {
 
 async function cargarTimelineCitas() {
     const timelineContainer = document.getElementById('timeline-grid-container');
-    let selectedDate = document.getElementById('timeline-date-picker').value;
     
-    // Si no hay fecha seleccionada, establecer la fecha actual
-    if (!selectedDate) {
-        selectedDate = new Date().toISOString().split('T')[0];
-        document.getElementById('timeline-date-picker').value = selectedDate;
-    }
+    // Establecer fecha actual por defecto SIEMPRE al cargar
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('timeline-date-picker').value = today;
+    const selectedDate = today;
     
     // Mostrar loading
     timelineContainer.innerHTML = `
